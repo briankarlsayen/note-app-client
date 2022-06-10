@@ -31,4 +31,7 @@
   .title {
     @apply text-sm;
   }
+  .note-input {
+    @apply w-full p-4 outline-none h-12
+  }
 }

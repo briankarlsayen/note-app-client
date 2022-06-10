@@ -1,41 +1,42 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import axios from '../../axios'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 function Item() {
-  const [items, setItems] = useState([])
+  const {id} = useParams();
+  const [note, setNote] = useState()
+  
   useEffect(() => {
-    getItemsByNote()
+    getNoteDetails()
   }, [])
 
-  let location = useLocation();
-  console.log('location', location)
-
-  const getItemsByNote = async() => {
+  const getNoteDetails = async() => {
     try {
-      const itemData = await axios.get(`/items/getbynote/${location}`)
-      if(itemData) {
-        setItems(itemData.data)
-      }
-      console.log('itemData', itemData)
+      const noteData = await axios.get(`/notes/${id}`)
+      console.log('noteData', noteData)
+      if(noteData) setNote(noteData.data)
     } catch(error) {
-      console.log('error', error)
+
     }
   }
   return (
-    <div>
-      {items && items.map(item => {
-        return <ItemList key={item.uuid} title={item.title} checked={item.checked} />
-      })}
+    <div className="home-container">
+      <h1>Note App</h1>
+      <div className="home-note-container">
+        {note && note.items.map(item => {
+          return <ItemList key={item.uuid} title={item.title} checked={item.checked} />
+        })}
+      </div>
+
     </div>
   )
 }
 
 const ItemList = ({title, checked}) => {
   return(
-    <div>
-      <p>{title}</p>
+    <div className="note-contaner">
+      <p className="title">{title}</p>
       <p>{checked}</p>
     </div>
   )

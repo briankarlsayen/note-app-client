@@ -5,6 +5,7 @@ import axios from '../../axios'
 
 export default function Home() {
   const [notes, setNotes] = useState()
+  const [inputText, setInputText] = useState('')
   useEffect(() => {
     getNotes()
   },[])
@@ -16,7 +17,24 @@ export default function Home() {
       console.log('error', error)
     }
   }
-  console.log('notes', notes)
+  const createNote = async(e) => {
+    e.preventDefault()
+    try {
+    const newNote = await axios.post('/notes', {
+      title: inputText,
+      body: '',
+      description: '',
+    })
+    if(newNote) {
+      let newNoteData = newNote.data.note
+      let noteList = [...notes, newNoteData]
+      setNotes(noteList)
+    }
+    } catch(error) {
+      console.log('error', error)
+    }
+  }
+  console.log('inputText', inputText)
   return (
     <div className="home-container">
       <h1>Note App</h1>
@@ -25,6 +43,9 @@ export default function Home() {
           return <Note key={note.uuid} id={note.uuid} title={note.title} date={note.createdAt} items={note.items}/>
         })}
       </div>
+      <form className="home-note-container w-full" onSubmit={(e)=>createNote(e)}>
+        <input className='note-input' type='text' onChange={(e)=>setInputText(e.target.value)} value={inputText}/>
+      </form>
     </div>
   )
 }
