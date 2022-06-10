@@ -1,0 +1,34 @@
+@import-normalize;
+@tailwind base;
+@tailwind components;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font: ui-sans-serif, Helvetica, Roboto;
+}
+
+@layer base {
+  :root {
+  }
+}
+
+@layer components {
+  .home-container {
+    @apply flex flex-col items-center justify-center bg-gray-50 w-full py-8 h-screen;
+  }
+  .home-note-container {
+    @apply overflow-hidden bg-white rounded max-w-[900px] w-full shadow-lg  leading-normal;
+  }
+  .note-contaner {
+    @apply block hover:bg-gray-100 hover:cursor-pointer p-4;
+  }
+  .note-title {
+    @apply font-semibold text-base mb-1 text-black group-hover:text-white;
+  }
+  .title {
+    @apply text-sm;
+  }
+}
