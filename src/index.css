@@ -17,21 +17,69 @@
 
 @layer components {
   .home-container {
-    @apply flex flex-col items-center justify-center bg-gray-50 w-full py-8 h-screen;
+    @apply flex flex-col items-center justify-center bg-gray-50 w-full py-8 h-screen relative;
   }
   .home-note-container {
-    @apply overflow-hidden bg-white rounded max-w-[900px] w-full shadow-lg  leading-normal;
+    @apply overflow-hidden rounded max-w-[900px] w-full leading-normal;
   }
-  .note-contaner {
-    @apply block hover:bg-gray-100 hover:cursor-pointer p-4;
+  
+  .back-btn-container {
+    @apply flex items-center w-24 rounded-sm absolute top-10 left-10 hover:underline cursor-pointer;
   }
-  .note-title {
-    @apply font-semibold text-base mb-1 text-black group-hover:text-white;
+  .back-btn-icon {
+    @apply w-8 h-8
+  }
+
+  .header {
+    @apply text-4xl font-bold max-w-[900px] w-full my-4 text-gray-700;
+  }
+  .item-header-margin {
+    @apply ml-[122px]
   }
   .title {
     @apply text-sm;
   }
+  .checked {
+    @apply line-through text-gray-500;
+  }
+  
+  .item-container {
+    @apply flex items-center;
+  }
+  .item-add-container {
+    @apply w-7 h-7 p-1.5 hover:bg-gray-300 cursor-pointer rounded-sm;
+  }
+  .item-opt-container {
+    @apply w-7 h-7 p-1.5 cursor-grab hover:bg-gray-300 rounded-sm;
+  }
+  .note-opt {
+    @apply flex mr-2 opacity-0;
+  }
+  .note-container {
+    @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 ease-in duration-150 shadow-lg;
+  }
+  .note-title {
+    @apply font-semibold text-base mb-1 text-black group-hover:text-white;
+  }
+  .item-hovered {
+    @apply opacity-40;
+  }
+  .item-input {
+    @apply w-full p-4 outline-none h-12 shadow-lg text-sm mr-[2.3rem] ml-4;
+  }
   .note-input {
-    @apply w-full p-4 outline-none h-12
+    @apply w-full p-4 outline-none h-12 shadow-lg text-sm mr-[2.3rem];
+  }
+  .item-input-margin {
+    @apply w-[54px];
+  }
+  .item-input-display {
+    @apply flex;
+  }
+  .item-list-margin {
+    @apply w-10;
+  }
+  .item-list-container {
+    @apply w-full flex;
   }
 }

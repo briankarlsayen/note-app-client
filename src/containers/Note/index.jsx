@@ -8,7 +8,7 @@ function Note({id, title, date, items}) {
     navigate(`/app/item/${id}`)
   }
   return (
-    <div className='note-contaner' onClick={handleClick}>
+    <div className='note-container' onClick={handleClick}>
       <div className="note-title">
         <h2 className="title">{title}</h2>
         {/* <p className="date">{date}</p> */}
