@@ -23,7 +23,6 @@ function Item({notes}) {
   const getItemDetails = async() => {
     try {
       const itemData = await axios.get(`/items/getbynote/${id}`)
-      console.log('itemData', itemData)
       if(itemData) setItems(itemData.data)
     } catch(error) {
 

@@ -17,7 +17,7 @@
 
 @layer components {
   .home-container {
-    @apply flex flex-col items-center justify-center bg-gray-50 w-full py-8 h-screen relative;
+    @apply flex flex-col items-center justify-center bg-gray-50 w-full py-8 h-screen relative overflow-hidden;
   }
   .home-note-container {
     @apply overflow-hidden rounded max-w-[900px] w-full leading-normal;
@@ -52,6 +52,9 @@
   .item-opt-container {
     @apply w-7 h-7 p-1.5 cursor-grab hover:bg-gray-300 rounded-sm;
   }
+  .item-opt-active {
+    @apply bg-gray-300;
+  }
   .note-opt {
     @apply flex mr-2 opacity-0;
   }
@@ -62,16 +65,13 @@
     @apply font-semibold text-base mb-1 text-black group-hover:text-white;
   }
   .item-hovered {
-    @apply opacity-40;
+    @apply opacity-40 ;
   }
   .item-input {
-    @apply w-full p-4 outline-none h-12 shadow-lg text-sm mr-[2.3rem] ml-4;
-  }
-  .note-input {
     @apply w-full p-4 outline-none h-12 shadow-lg text-sm mr-[2.3rem];
   }
   .item-input-margin {
-    @apply w-[54px];
+    @apply w-[54px] mr-4;
   }
   .item-input-display {
     @apply flex;
@@ -81,5 +81,17 @@
   }
   .item-list-container {
     @apply w-full flex;
+  }
+  .note-opt-container {
+    @apply absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800;
+  }
+  .note-opt-item {
+    @apply px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white flex items-center cursor-pointer;
+  }
+  .note-opt-position {
+    @apply left-[306px];
+  }
+  .note-opt-icon {
+    @apply w-4 h-4 mr-2;
   }
 }
