@@ -37,7 +37,7 @@
     @apply ml-[122px]
   }
   .title {
-    @apply text-sm;
+    @apply text-sm leading-[1.1rem];
   }
   .checked {
     @apply line-through text-gray-500;
@@ -58,11 +58,14 @@
   .note-opt {
     @apply flex mr-2 opacity-0;
   }
-  .note-container {
+  /* .note-container {
     @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 ease-in duration-150 shadow-lg;
+  } */
+  .note-container {
+    @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 shadow-lg items-center;
   }
   .note-title {
-    @apply font-semibold text-base mb-1 text-black group-hover:text-white;
+    @apply text-base text-black group-hover:text-white font-normal;
   }
   .item-hovered {
     @apply opacity-40 ;
@@ -80,7 +83,7 @@
     @apply w-10;
   }
   .item-list-container {
-    @apply w-full flex;
+    @apply w-full h-12 flex;
   }
   .note-opt-container {
     @apply absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800;
