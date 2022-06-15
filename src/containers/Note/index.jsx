@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react'
-import Item from '../Item'
 import {useNavigate} from 'react-router-dom'
-import { useState } from 'react'
 
-function Note({id, title, date, items, isNoteEditing, refNoteInput, noteTextInput, setNoteTextInput}) {
+function Note({id, title, date, items, isNoteEditing, refNoteInput, noteTextInput, setNoteTextInput, saveEditNote }) {
   useEffect(() => {
     if(isNoteEditing === id) setNoteTextInput(title)
   }, [isNoteEditing])
 
-  // setNoteTextInput(title)
   const navigate = useNavigate()
   const handleClick = () => {
     navigate(`/app/item/${id}`)
@@ -16,21 +13,16 @@ function Note({id, title, date, items, isNoteEditing, refNoteInput, noteTextInpu
   return (
     <div className="item-list-container">
       { isNoteEditing === id ? 
-        <div className='home-note-container'>
+        <form className='home-note-container' onSubmit={(e) => saveEditNote(e)}>
           <input ref={refNoteInput} className='item-input' type='text' value={noteTextInput} onChange={(e)=>setNoteTextInput(e.target.value)}/>
-        </div>
+        </form>
         :
         <div className='note-container' onClick={handleClick}>
-          {/* <div className="note-title"> 
-            <h2 className="title">{title}</h2>
-          </div> */}
-            <h2 className="title">{title}</h2>
+          <h2 className="title">{title}</h2>
         </div>
-          }
-
+      }
       <div className='item-list-margin'></div>
     </div>
-   
   )
 }
 

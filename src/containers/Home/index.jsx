@@ -45,14 +45,13 @@ export default function Home({notes, setNotes}) {
     // setNoteEditing('')
   }
   const deleteNote = async(note) => {
-    console.log('delete')
     try {
-      const deleteNoteData = await axios.put(`/notes/delete/${note.uuid}`)
-      if(!deleteNoteData) return console.log('error', error)
       const newNoteList = notes;
       const noteDeletedId = notes.findIndex(data => data.uuid === note.uuid)
       newNoteList.splice(noteDeletedId, 1)
       setNotes(newNoteList)
+      const deleteNoteData = await axios.put(`/notes/delete/${note.uuid}`)
+      if(!deleteNoteData) return console.log('error', error)
       setNoteOption('')
     } catch(error) {
       console.log('error', error)
@@ -61,37 +60,44 @@ export default function Home({notes, setNotes}) {
   const editNote = async(note) => {
     setNoteEditing(note.uuid)
   }
-  const saveEditNote = async() => {
+  const saveEditNote = async(e) => {
     if(isNoteEditing) {
       try {
-        // const editNoteData = await axios.put(`/notes/edit/${isNoteEditing}`, {
-        //   title: noteTextInput,
-        //   body: '',
-        //   description: ''
-        // })
-        // if(!editNoteData) return console.log('error', error)
-        // const newNoteList = notes;
-        // const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing)
-        // newNoteList[noteEditingId] = editNoteData.data
-        // setNotes(newNoteList)
+        e.preventDefault()
+        setNoteOption('')
+        const editData = {
+          title: noteTextInput,
+          body: '',
+          description: ''
+        }
+        const newNoteList = notes;
+        const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing)
+        newNoteList[noteEditingId] = editData
+        setNotes(newNoteList)
+        const editNoteData = await axios.put(`/notes/edit/${isNoteEditing}`, editData)
+        if(!editNoteData) return console.log('error', error)
         setNoteEditing('')
       } catch(error) {
         console.log('error', error)
       }
     }
-   
   }
   useEffect(() => {
     if(isNoteEditing) refNoteInput.current.focus()
   }, [isNoteEditing])
-  
+
+  const saveEdit = (e) => {
+    setNoteOption('')
+    setHoveredItem('')
+    saveEditNote(e)
+  }
   return (
-    <div className="home-container" onClick={e => e.target.className === "home-container" ? setNoteOption('') || setHoveredItem('') || saveEditNote() : null}>
+    <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null}>
       <h1 className="header item-header-margin">Note App</h1>
       <div className="home-note-container">
         {notes && notes.map(note => { 
           return (
-            <div className='item-container' onMouseEnter={(e)=> itemHovered(note)} onMouseLeave={itemNotHovered}>
+            <div key={note.uuid}  className='item-container' onMouseEnter={(e)=> itemHovered(note)} onMouseLeave={itemNotHovered}>
               <div className={`${note.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
                 <div className="item-add-container">
                   <img className="item-add-icon" src={addIcon} />
@@ -102,7 +108,7 @@ export default function Home({notes, setNotes}) {
               </div>
               { note.uuid === noteOption ? <NoteOptions note={note} deleteNote={deleteNote} editNote={editNote} /> : null }
                 
-              <Note key={note.uuid} 
+              <Note key={note.uuid}
                 id={note.uuid} 
                 title={note.title} 
                 date={note.createdAt} 
@@ -110,7 +116,9 @@ export default function Home({notes, setNotes}) {
                 isNoteEditing={isNoteEditing} 
                 refNoteInput={refNoteInput} 
                 setNoteTextInput={setNoteTextInput} 
-                noteTextInput={noteTextInput} />
+                noteTextInput={noteTextInput} 
+                saveEditNote={saveEditNote}
+                />
             </div>
           )
         })}
@@ -131,7 +139,7 @@ const NoteInput = ({createNote, setInputText, inputText}) => {
 
 const NoteOptions = ({note, editNote, deleteNote}) => {
   return(
-    <div className="note-opt-container note-opt-position"> 
+    <div key={note.uuid} className="note-opt-container note-opt-position"> 
       <div className="note-opt-item" onClick={()=>deleteNote(note)}>
         <img className='note-opt-icon' src={deleteIcon} />
         <p>Delete</p>
