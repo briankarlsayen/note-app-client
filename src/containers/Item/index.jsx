@@ -50,20 +50,44 @@ function Item() {
     }
   }
 
+  const isURL = (str) => {
+    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+  }
+
   const createItem = async(e) => {
     e.preventDefault()
     try {
-    const newItem = await axios.post('/items', {
-      noteUuid: id,
-      title: inputText,
-      body: '',
-      type: 'Text',
-    })
-    if(newItem) {
-      let newItemData = newItem.data.item
-      setItems([...items, newItemData])
-      setInputText('')
-    }
+      let params;
+      if(isURL(inputText)) {
+        console.log('bookmark')
+        params = {
+          noteUuid: id,
+          title: inputText,
+          body: '',
+          type: 'Bookmark',
+        }
+      } else {
+        params ={
+          noteUuid: id,
+          title: inputText,
+          body: '',
+          type: 'Text',
+        }
+      }
+
+      const newItem = await axios.post('/items', params)
+      if(newItem) {
+        let newItemData = newItem.data.item
+        console.log('newItemData', newItemData)
+        setItems([...items, newItemData])
+        setInputText('')
+      }
     } catch(error) {
       console.log('error', error)
     }
@@ -134,6 +158,7 @@ function Item() {
     setHoveredItem('')
     saveEditItem(e)
   }
+  console.log('items', items)
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
       <div className="back-btn-container" onClick={()=>navigate('/app')}>
@@ -155,16 +180,30 @@ function Item() {
               </div>
               { item.uuid === itemOption ? <ItemOptions item={item} deleteItem={deleteItem} editItem={editItem} saveEditItem={saveEditItem} /> : null }
 
-              <ItemList title={item.title} 
-              checked={item.checked} 
-              item={item} 
-              finishItem={finishItem} 
-              saveEditItem={saveEditItem} 
-              refNoteInput={refNoteInput} 
-              editTextInput={editTextInput} 
-              setEditTextInput={setEditTextInput}
-              isItemEditing={isItemEditing}
-              />
+              { item.type === "Text" && <ItemList 
+                title={item.title} 
+                checked={item.checked} 
+                item={item} 
+                finishItem={finishItem} 
+                saveEditItem={saveEditItem} 
+                refNoteInput={refNoteInput} 
+                editTextInput={editTextInput} 
+                setEditTextInput={setEditTextInput}
+                isItemEditing={isItemEditing}
+              />}
+              {
+                item.type === "Bookmark" && <ItemBookmark 
+                url={item.title} 
+                title={item.preview ? item.preview.title : item.title} 
+                body={item.body} 
+                description={item.preview ? item.preview.description : item.title} 
+                image={item.preview ? item.preview.image.data : null }
+                type={item.preview ? item.preview.type : null}
+                imageUrl={item.preview ? item.preview.imageUrl : null}
+                item={item}
+
+                />
+              }
             </div>
           )
         })}
@@ -183,10 +222,47 @@ const ItemList = ({title, checked, item, finishItem, isItemEditing, refNoteInput
         </form>
         :
         <div className='note-container' onClick={()=>finishItem(item)}>
-          <p className={checked ? `title checked` : 'title'}>{title}</p>
+          <p className={checked ? `title checked` : 'title'}>{title ? title : ""}</p>
         </div>
       }
       <div className='item-list-margin'></div>
+    </div>
+  )
+}
+
+const ItemBookmark = ({url, title, body, description, image, type, item, imageUrl}) => {
+  // console.log('item', item)
+  function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+  }
+  const base64String = _arrayBufferToBase64(image)
+  let convertImg = `data:${type};base64,${base64String}`
+  return(
+    <div className="item-bookmark-container">
+      <div className="item-bookmark" onClick={()=> window.open(url, "_blank")}>
+        <div className="item-bookmark-left">
+          <p className="item-bookmark-title">{title}</p>
+          <p className="item-bookmark-description">{description}</p>
+          <p className="item-bookmark-url">{url}</p>
+        </div>
+        { type && type === "url" ?
+        <div className="item-bookmark-right">
+          <img src={imageUrl} alt={title} />
+        </div>:
+        <div className="item-bookmark-right">
+          <img src={convertImg} alt={title} />
+        </div>
+        }
+        
+      </div>
+      
+      <div className="item-list-margin"></div> 
     </div>
   )
 }

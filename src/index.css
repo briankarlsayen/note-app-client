@@ -17,10 +17,10 @@
 
 @layer components {
   .home-container {
-    @apply flex flex-col items-center justify-center bg-gray-50 w-full py-8 h-screen relative overflow-hidden;
+    @apply flex flex-col items-center bg-gray-50 w-full py-8 h-full relative min-h-screen;
   }
   .home-note-container {
-    @apply overflow-hidden rounded max-w-[900px] w-full leading-normal;
+    @apply rounded max-w-[900px] w-full leading-normal;
   }
   
   .back-btn-container {
@@ -86,7 +86,7 @@
     @apply w-full h-12 flex;
   }
   .note-opt-container {
-    @apply absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800;
+    @apply absolute right-0 z-20 w-56 py-2 mt-2 bg-white rounded-md shadow-xl dark:bg-gray-800;
   }
   .note-opt-item {
     @apply px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white flex items-center cursor-pointer;
@@ -96,5 +96,28 @@
   }
   .note-opt-icon {
     @apply w-4 h-4 mr-2;
+  }
+
+  .item-bookmark-container {
+    @apply flex w-full text-sm mt-1.5;
+  }
+
+  .item-bookmark {
+    @apply w-full h-36 bg-white border rounded-md hover:bg-gray-100 hover:cursor-pointer grid grid-cols-3 gap-4;
+  }
+  .item-bookmark-left {
+    @apply px-4 align-middle my-auto col-span-2;
+  }
+  .item-bookmark-right {
+    @apply h-auto overflow-hidden;
+  }
+  .item-bookmark-title {
+    @apply font-normal text-base pb-2;
+  }
+  .item-bookmark-description {
+    @apply text-gray-600;
+  }
+  .item-bookmark-url {
+    @apply text-xs;
   }
 }
