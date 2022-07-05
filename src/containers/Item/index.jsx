@@ -84,7 +84,6 @@ function Item() {
       const newItem = await axios.post('/items', params)
       if(newItem) {
         let newItemData = newItem.data.item
-        console.log('newItemData', newItemData)
         setItems([...items, newItemData])
         setInputText('')
       }
@@ -99,12 +98,12 @@ function Item() {
         checked: !params.checked,
       }
       const newItemList = items;
-      const itemEditingId = items.findIndex(item => item.uuid === params.uuid)
+      const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
       newItemList[itemEditingId] = updatedData
       setItems(newItemList)
 
-      const finishItem = await axios.put(`/items/editcheck/${params.uuid}`)
-      if(!finishItem) return console.log('error', error)    
+      // const finishItem = await axios.put(`/items/editcheck/${params.uuid}`)
+      // if(!finishItem) return console.log('error', error)    
     } catch(error) {
       console.log('error', error)
     }
@@ -132,18 +131,18 @@ function Item() {
   const saveEditItem = async(e) => {
     if(isItemEditing) {
       try {
-        e.preventDefault()
+        if(e._reactName === "onSubmit") e.preventDefault()
         setItemOption('')
         const editData = {
           ...isItemEditing,
           title: editTextInput,
         }
         const newItemList = items;
-        const itemEditingId = items.findIndex(item => item.uuid === item.uuid)
+        const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
         newItemList[itemEditingId] = editData
         setItems(newItemList)
-        const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, editData)
-        if(!editNoteData) return console.log('error', error)
+        // const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, editData)
+        // if(!editNoteData) return console.log('error', error)
         setItemEditing('')
       } catch(error) {
         console.log('error', error)
@@ -158,7 +157,21 @@ function Item() {
     setHoveredItem('')
     saveEditItem(e)
   }
-  console.log('items', items)
+
+  const handleAddBtn = (index) => {
+    const newAItem = {
+      uuid: Date.now(),
+      title: '',
+      body: '',
+      type: 'Text',
+      checked: false,
+    }
+    const newItemArr = items
+    newItemArr.splice(index + 1, 0, newAItem)
+    setItems(newItemArr)
+    setItemEditing(newAItem)
+  }
+  // console.log('items', items)
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
       <div className="back-btn-container" onClick={()=>navigate('/app')}>
@@ -167,11 +180,11 @@ function Item() {
       </div>
       <h1 className="header item-header-margin">{note.title}</h1>
       <div className="home-note-container">
-        {items && items.map(item => {
+        {items && items.map((item, index) => {
           return (
             <div key={item.uuid} className='item-container' onMouseEnter={(e)=> itemHovered(item)} onMouseLeave={()=> setHoveredItem('')}>
               <div className={`${item.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
-                <div className="item-add-container">
+                <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
                   <img className="item-add-icon" src={addIcon} />
                 </div>
                 <div className={`${itemOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(item)}>
@@ -180,7 +193,8 @@ function Item() {
               </div>
               { item.uuid === itemOption ? <ItemOptions item={item} deleteItem={deleteItem} editItem={editItem} saveEditItem={saveEditItem} /> : null }
 
-              { item.type === "Text" && <ItemList 
+              { 
+                item.type === "Text" && <ItemList 
                 title={item.title} 
                 checked={item.checked} 
                 item={item} 
@@ -189,9 +203,9 @@ function Item() {
                 refNoteInput={refNoteInput} 
                 editTextInput={editTextInput} 
                 setEditTextInput={setEditTextInput}
-                isItemEditing={isItemEditing}
-              />}
-              {
+                isItemEditing={isItemEditing} />
+              }
+              { 
                 item.type === "Bookmark" && <ItemBookmark 
                 url={item.title} 
                 title={item.preview ? item.preview.title : item.title} 
@@ -200,9 +214,7 @@ function Item() {
                 image={item.preview ? item.preview.image.data : null }
                 type={item.preview ? item.preview.type : null}
                 imageUrl={item.preview ? item.preview.imageUrl : null}
-                item={item}
-
-                />
+                item={item} />
               }
             </div>
           )
@@ -231,7 +243,6 @@ const ItemList = ({title, checked, item, finishItem, isItemEditing, refNoteInput
 }
 
 const ItemBookmark = ({url, title, body, description, image, type, item, imageUrl}) => {
-  // console.log('item', item)
   function _arrayBufferToBase64( buffer ) {
     var binary = '';
     var bytes = new Uint8Array( buffer );
