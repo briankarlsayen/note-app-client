@@ -17,8 +17,11 @@ function Item() {
   const [itemOption, setItemOption] = useState('')
   const [isItemEditing, setItemEditing] = useState('')
   const [editTextInput, setEditTextInput] = useState('')
+  const [isDragActive, setDragActive] = useState()
 
   const refNoteInput = useRef(null)  
+  const dragItem = useRef();
+  const dragOverItem = useRef();
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -171,7 +174,28 @@ function Item() {
     setItems(newItemArr)
     setItemEditing(newAItem)
   }
-  // console.log('items', items)
+
+  const dragStart = (e, position) => {
+    dragItem.current = position;
+  };
+ 
+  const dragEnter = (e, position) => {
+    dragOverItem.current = position;
+    setDragActive(position)
+  };
+
+  const drop = (e) => {
+    const copyListItems = [...items];
+    const dragItemContent = copyListItems[dragItem.current];
+    copyListItems.splice(dragItem.current, 1);
+    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setItems(copyListItems);
+    setDragActive(null)
+  };
+
+  console.log('isDragActive', isDragActive)
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
       <div className="back-btn-container" onClick={()=>navigate('/app')}>
@@ -182,7 +206,13 @@ function Item() {
       <div className="home-note-container">
         {items && items.map((item, index) => {
           return (
-            <div key={item.uuid} className='item-container' onMouseEnter={(e)=> itemHovered(item)} onMouseLeave={()=> setHoveredItem('')}>
+            <div key={item.uuid} className={`${isDragActive === index ? 'item-drag-hovered item-container' : 'item-container'}`} 
+            onMouseEnter={(e)=> itemHovered(item)} 
+            onMouseLeave={()=> setHoveredItem('')}
+            onDragStart={(e) => dragStart(e, index)}
+            onDragEnter={(e) => dragEnter(e, index)}
+            onDragEnd={drop}
+            draggable>
               <div className={`${item.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
                 <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
                   <img className="item-add-icon" src={addIcon} />
