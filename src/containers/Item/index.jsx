@@ -169,7 +169,7 @@ function Item() {
       type: 'Text',
       checked: false,
     }
-    const newItemArr = items
+    const newItemArr = items;
     newItemArr.splice(index + 1, 0, newAItem)
     setItems(newItemArr)
     setItemEditing(newAItem)
@@ -195,7 +195,6 @@ function Item() {
     setDragActive(null)
   };
 
-  console.log('isDragActive', isDragActive)
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
       <div className="back-btn-container" onClick={()=>navigate('/app')}>
@@ -206,7 +205,7 @@ function Item() {
       <div className="home-note-container">
         {items && items.map((item, index) => {
           return (
-            <div key={item.uuid} className={`${isDragActive === index ? 'item-drag-hovered item-container' : 'item-container'}`} 
+            <div key={item.uuid} className="item-container" 
             onMouseEnter={(e)=> itemHovered(item)} 
             onMouseLeave={()=> setHoveredItem('')}
             onDragStart={(e) => dragStart(e, index)}
@@ -233,7 +232,9 @@ function Item() {
                 refNoteInput={refNoteInput} 
                 editTextInput={editTextInput} 
                 setEditTextInput={setEditTextInput}
-                isItemEditing={isItemEditing} />
+                isItemEditing={isItemEditing} 
+                className={`${isDragActive === index ? 'item-drag-hovered note-container' : 'note-container'}`} 
+                />
               }
               { 
                 item.type === "Bookmark" && <ItemBookmark 
@@ -244,8 +245,13 @@ function Item() {
                 image={item.preview ? item.preview.image.data : null }
                 type={item.preview ? item.preview.type : null}
                 imageUrl={item.preview ? item.preview.imageUrl : null}
-                item={item} />
+                item={item} 
+                isDragActive={isDragActive}
+                index={index}
+                className={`${isDragActive === index ? 'item-drag-hovered item-bookmark-container' : 'item-bookmark-container'}`}
+                />
               }
+              <div className='item-list-margin'></div>
             </div>
           )
         })}
@@ -255,7 +261,7 @@ function Item() {
   )
 }
 
-const ItemList = ({title, checked, item, finishItem, isItemEditing, refNoteInput, saveEditItem, setEditTextInput, editTextInput}) => {
+const ItemList = ({title, checked, item, finishItem, isItemEditing, refNoteInput, saveEditItem, setEditTextInput, editTextInput, className}) => {
   return(
     <div className="item-list-container" onSubmit={(e) => saveEditItem(e)}>
       { isItemEditing.uuid === item.uuid ? 
@@ -263,16 +269,15 @@ const ItemList = ({title, checked, item, finishItem, isItemEditing, refNoteInput
           <input ref={refNoteInput} className='item-input' type='text' value={editTextInput} onChange={(e)=>setEditTextInput(e.target.value)}/>
         </form>
         :
-        <div className='note-container' onClick={()=>finishItem(item)}>
+        <div className={className} onClick={()=>finishItem(item)}>
           <p className={checked ? `title checked` : 'title'}>{title ? title : ""}</p>
         </div>
       }
-      <div className='item-list-margin'></div>
     </div>
   )
 }
 
-const ItemBookmark = ({url, title, body, description, image, type, item, imageUrl}) => {
+const ItemBookmark = ({url, title, body, description, image, type, item, imageUrl, className}) => {
   function _arrayBufferToBase64( buffer ) {
     var binary = '';
     var bytes = new Uint8Array( buffer );
@@ -285,8 +290,9 @@ const ItemBookmark = ({url, title, body, description, image, type, item, imageUr
   const base64String = _arrayBufferToBase64(image)
   let convertImg = `data:${type};base64,${base64String}`
   return(
-    <div className="item-bookmark-container">
+    <div className={className}>
       <div className="item-bookmark" onClick={()=> window.open(url, "_blank")}>
+      {/* <div onClick={()=> window.open(url, "_blank")} className={`${isDragActive === index ? 'item-drag-hovered item-bookmark' : 'item-bookmark'}`}> */}
         <div className="item-bookmark-left">
           <p className="item-bookmark-title">{title}</p>
           <p className="item-bookmark-description">{description}</p>
@@ -302,8 +308,6 @@ const ItemBookmark = ({url, title, body, description, image, type, item, imageUr
         }
         
       </div>
-      
-      <div className="item-list-margin"></div> 
     </div>
   )
 }

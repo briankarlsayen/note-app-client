@@ -44,7 +44,7 @@
   }
   
   .item-container {
-    @apply flex items-center;
+    @apply flex items-center mb-1;
   }
   .item-add-container {
     @apply w-7 h-7 p-1.5 hover:bg-gray-300 cursor-pointer rounded-sm;
@@ -62,7 +62,7 @@
     @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 ease-in duration-150 shadow-lg;
   } */
   .note-container {
-    @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 shadow-lg items-center;
+    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-4 items-center mb-2;
   }
   .note-title {
     @apply text-base text-black group-hover:text-white font-normal;
@@ -71,7 +71,7 @@
     @apply opacity-40 ;
   }
   .item-input {
-    @apply w-full p-4 outline-none h-12 shadow-lg text-sm mr-[2.3rem];
+    @apply w-full p-4 outline-none h-12 text-sm mr-[2.3rem] bg-gray-50;
   }
   .item-input-margin {
     @apply w-[54px] mr-4;
@@ -99,7 +99,7 @@
   }
 
   .item-bookmark-container {
-    @apply flex w-full text-sm mt-1.5;
+    @apply flex w-full text-sm mb-2;
   }
 
   .item-bookmark {
@@ -127,6 +127,6 @@
     @apply h-56 w-56;
   }
   .item-drag-hovered {
-    @apply border-b-4 border-red-600 my-8;
+    @apply border-b-4 border-b-blue-300 mb-1;
   }
 }

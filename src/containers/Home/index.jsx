@@ -14,6 +14,9 @@ export default function Home({notes, setNotes}) {
   const [isNoteEditing, setNoteEditing] = useState('')
   const [noteTextInput, setNoteTextInput] = useState('')
   const refNoteInput = useRef(null)
+  const dragItem = useRef();
+  const dragOverItem = useRef();
+  const [isDragActive, setDragActive] = useState()
 
   const createNote = async(e) => {
     e.preventDefault()
@@ -59,9 +62,10 @@ export default function Home({notes, setNotes}) {
     }
   }
   const editNote = async(note) => {
-    setNoteEditing(note.uuid)
+    setNoteEditing(note)
   }
   const saveEditNote = async(e) => {
+    console.log('save')
     if(isNoteEditing) {
       try {
         e.preventDefault()
@@ -72,19 +76,24 @@ export default function Home({notes, setNotes}) {
           description: ''
         }
         const newNoteList = notes;
-        const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing)
+        const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
+        console.log('noteEditingId', noteEditingId)
         newNoteList[noteEditingId] = editData
         setNotes(newNoteList)
-        const editNoteData = await axios.put(`/notes/edit/${isNoteEditing}`, editData)
-        if(!editNoteData) return console.log('error', error)
-        setNoteEditing('')
+        // const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
+        // if(!editNoteData) return console.log('error', error)
+        setNoteEditing(null)
       } catch(error) {
         console.log('error', error)
       }
     }
   }
   useEffect(() => {
-    if(isNoteEditing) refNoteInput.current.focus()
+    if(isNoteEditing) {
+      setNoteTextInput(isNoteEditing.title)
+      refNoteInput.current.focus()
+    }
+    // console.log('isNoteEditing', isNoteEditing)
   }, [isNoteEditing])
 
   const saveEdit = (e) => {
@@ -92,16 +101,60 @@ export default function Home({notes, setNotes}) {
     setHoveredItem('')
     saveEditNote(e)
   }
+
+  const handleAddBtn = (index) => {
+    const newAItem = {
+      uuid: Date.now(),
+      title: '',
+      body: '',
+      type: 'Text',
+      checked: false,
+    }
+    const newItemArr = notes
+    newItemArr.splice(index + 1, 0, newAItem)
+    setNotes(newItemArr)
+    setNoteEditing(newAItem)
+  }
+
+  const dragStart = (e, position) => {
+    dragItem.current = position;
+  };
+ 
+  const dragEnter = (e, position) => {
+    dragOverItem.current = position;
+    setDragActive(position)
+  };
+
+  const drop = (e) => {
+    const copyListItems = [...notes];
+    const dragItemContent = copyListItems[dragItem.current];
+    copyListItems.splice(dragItem.current, 1);
+    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setNotes(copyListItems);
+    setDragActive(null)
+  };
+
+  
+
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null}>
       {/* <Upload /> */}
       <h1 className="header item-header-margin">Note App</h1>
       <div className="home-note-container">
-        {notes && notes.map(note => { 
+        {notes && notes.map((note, index) => { 
+          // console.log('note', note.uuid)
           return (
-            <div key={note.uuid}  className='item-container' onMouseEnter={(e)=> itemHovered(note)} onMouseLeave={itemNotHovered}>
+            <div key={note.uuid} className='item-container'
+            onMouseEnter={(e)=> itemHovered(note)} 
+            onMouseLeave={itemNotHovered}
+            onDragStart={(e) => dragStart(e, index)}
+            onDragEnter={(e) => dragEnter(e, index)}
+            onDragEnd={drop}
+            draggable>
               <div className={`${note.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
-                <div className="item-add-container">
+                <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
                   <img className="item-add-icon" src={addIcon} />
                 </div>
                 <div className={`${noteOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(note)}>
@@ -120,6 +173,7 @@ export default function Home({notes, setNotes}) {
                 setNoteTextInput={setNoteTextInput} 
                 noteTextInput={noteTextInput} 
                 saveEditNote={saveEditNote}
+                className={`${isDragActive === index ? 'item-drag-hovered note-container' : 'note-container'}`} 
                 />
             </div>
           )
