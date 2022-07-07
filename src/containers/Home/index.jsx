@@ -65,19 +65,16 @@ export default function Home({notes, setNotes}) {
     setNoteEditing(note)
   }
   const saveEditNote = async(e) => {
-    console.log('save')
     if(isNoteEditing) {
       try {
         e.preventDefault()
         setNoteOption('')
         const editData = {
+          ...isNoteEditing,
           title: noteTextInput,
-          body: '',
-          description: ''
         }
         const newNoteList = notes;
         const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
-        console.log('noteEditingId', noteEditingId)
         newNoteList[noteEditingId] = editData
         setNotes(newNoteList)
         // const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
