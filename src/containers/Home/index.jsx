@@ -77,8 +77,8 @@ export default function Home({notes, setNotes}) {
         const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
         newNoteList[noteEditingId] = editData
         setNotes(newNoteList)
-        // const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
-        // if(!editNoteData) return console.log('error', error)
+        const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
+        if(!editNoteData) return console.log('error', error)
         setNoteEditing(null)
       } catch(error) {
         console.log('error', error)
@@ -90,7 +90,6 @@ export default function Home({notes, setNotes}) {
       setNoteTextInput(isNoteEditing.title)
       refNoteInput.current.focus()
     }
-    // console.log('isNoteEditing', isNoteEditing)
   }, [isNoteEditing])
 
   const saveEdit = (e) => {
@@ -122,7 +121,10 @@ export default function Home({notes, setNotes}) {
     setDragActive(position)
   };
 
-  const drop = (e) => {
+  const drop = async(e) => {
+    const refNote = notes[dragOverItem.current];
+    const {uuid} = notes[dragItem.current]
+    const refUuid = dragOverItem.current !== 0 ? refNote.uuid : null
     const copyListItems = [...notes];
     const dragItemContent = copyListItems[dragItem.current];
     copyListItems.splice(dragItem.current, 1);
@@ -131,6 +133,8 @@ export default function Home({notes, setNotes}) {
     dragOverItem.current = null;
     setNotes(copyListItems);
     setDragActive(null)
+    const updatePosition = await axios.put(`/notes/reposition/${ uuid }`, { refUuid: refUuid })
+    if(!updatePosition) return console.log('error', error)
   };
 
   
@@ -141,7 +145,6 @@ export default function Home({notes, setNotes}) {
       <h1 className="header item-header-margin">Note App</h1>
       <div className="home-note-container">
         {notes && notes.map((note, index) => { 
-          // console.log('note', note.uuid)
           return (
             <div key={note.uuid} className='item-container'
             onMouseEnter={(e)=> itemHovered(note)} 

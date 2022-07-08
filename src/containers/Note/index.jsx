@@ -1,13 +1,6 @@
-import React, { useEffect } from 'react'
 import {useNavigate} from 'react-router-dom'
 
 function Note({id, title, date, items, isNoteEditing, refNoteInput, noteTextInput, setNoteTextInput, saveEditNote, className}) {
-  // useEffect(() => {
-  //   if(isNoteEditing.uuid === id) setNoteTextInput(title)
-  // }, [isNoteEditing])
-  // console.log('isNoteEditing.uuid === id', isNoteEditing.uuid === id)
-  // console.log('id', id)
-
   const navigate = useNavigate()
   const handleClick = () => {
     navigate(`/app/item/${id}`)
