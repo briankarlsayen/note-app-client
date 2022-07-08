@@ -125,6 +125,7 @@ export default function Home({notes, setNotes}) {
     const refNote = notes[dragOverItem.current];
     const {uuid} = notes[dragItem.current]
     const refUuid = dragOverItem.current !== 0 ? refNote.uuid : null
+
     const copyListItems = [...notes];
     const dragItemContent = copyListItems[dragItem.current];
     copyListItems.splice(dragItem.current, 1);
@@ -133,6 +134,7 @@ export default function Home({notes, setNotes}) {
     dragOverItem.current = null;
     setNotes(copyListItems);
     setDragActive(null)
+
     const updatePosition = await axios.put(`/notes/reposition/${ uuid }`, { refUuid: refUuid })
     if(!updatePosition) return console.log('error', error)
   };

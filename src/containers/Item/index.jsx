@@ -184,7 +184,11 @@ function Item() {
     setDragActive(position)
   };
 
-  const drop = (e) => {
+  const drop = async(e) => {
+    const refNote = items[dragOverItem.current];
+    const {uuid} = items[dragItem.current]
+    const refUuid = dragOverItem.current !== 0 ? refNote.uuid : null
+
     const copyListItems = [...items];
     const dragItemContent = copyListItems[dragItem.current];
     copyListItems.splice(dragItem.current, 1);
@@ -193,6 +197,9 @@ function Item() {
     dragOverItem.current = null;
     setItems(copyListItems);
     setDragActive(null)
+
+    const updatePosition = await axios.put(`/items/reposition/${ uuid }`, { refUuid: refUuid })
+    if(!updatePosition) return console.log('error', error)
   };
 
   return (
