@@ -18,6 +18,7 @@ function Item() {
   const [isItemEditing, setItemEditing] = useState('')
   const [editTextInput, setEditTextInput] = useState('')
   const [isDragActive, setDragActive] = useState()
+  const [isRefUuid, setRefUuid] = useState('')
 
   const refNoteInput = useRef(null)  
   const dragItem = useRef();
@@ -68,7 +69,7 @@ function Item() {
     try {
       let params;
       if(isURL(inputText)) {
-        console.log('bookmark')
+        // console.log('bookmark')
         params = {
           noteUuid: id,
           title: inputText,
@@ -133,23 +134,52 @@ function Item() {
   }
   const saveEditItem = async(e) => {
     if(isItemEditing) {
-      try {
-        if(e._reactName === "onSubmit") e.preventDefault()
-        setItemOption('')
-        const editData = {
-          ...isItemEditing,
-          title: editTextInput,
+      // if(e._reactName === "onSubmit") e.preventDefault()
+      e.preventDefault()
+      setItemOption('')
+      const newItemList = items;
+      const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
+
+      if(isRefUuid) {
+        try {
+          console.log('isItemEditing', isItemEditing)
+          const editData = {
+            noteUuid: id,
+            title: editTextInput,
+            refUuid: isRefUuid,
+            body: '',
+            description: '',
+            type: 'Text',
+            checked: false,
+          }
+          
+          const createNewItem = await axios.post('/items', editData)
+          if(!createNewItem) return console.log('error', error)
+
+          newItemList[itemEditingId] = createNewItem.data.item
+          setItems(newItemList)
+          setRefUuid('')
+          setItemEditing('')
+        } catch (error) {
+          console.log('error', error)
         }
-        const newItemList = items;
-        const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
-        newItemList[itemEditingId] = editData
-        setItems(newItemList)
-        // const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, editData)
-        // if(!editNoteData) return console.log('error', error)
-        setItemEditing('')
-      } catch(error) {
-        console.log('error', error)
-      }
+      } else {
+        try {
+          const editData = {
+            ...isItemEditing,
+            title: editTextInput,
+          }
+          // const newItemList = items;
+          // const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
+          newItemList[itemEditingId] = editData
+          setItems(newItemList)
+          const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, editData)
+          if(!editNoteData) return console.log('error', error)
+          setItemEditing('')
+        } catch(error) {
+          console.log('error', error)
+        }
+      }      
     }
   }
   const editItem = async(item) => {
@@ -162,6 +192,7 @@ function Item() {
   }
 
   const handleAddBtn = (index) => {
+    const uuidParams = items.length ? items[index].uuid : '';
     const newAItem = {
       uuid: Date.now(),
       title: '',
@@ -169,6 +200,7 @@ function Item() {
       type: 'Text',
       checked: false,
     }
+    setRefUuid(uuidParams)
     const newItemArr = items;
     newItemArr.splice(index + 1, 0, newAItem)
     setItems(newItemArr)

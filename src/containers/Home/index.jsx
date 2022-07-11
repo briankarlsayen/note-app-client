@@ -13,6 +13,7 @@ export default function Home({notes, setNotes}) {
   const [noteOption, setNoteOption] = useState('')
   const [isNoteEditing, setNoteEditing] = useState('')
   const [noteTextInput, setNoteTextInput] = useState('')
+  const [isRefUuid, setRefUuid] = useState('')
   const refNoteInput = useRef(null)
   const dragItem = useRef();
   const dragOverItem = useRef();
@@ -21,17 +22,21 @@ export default function Home({notes, setNotes}) {
   const createNote = async(e) => {
     e.preventDefault()
     try {
-    const newNote = await axios.post('/notes', {
-      title: inputText,
-      body: '',
-      description: '',
-    })
-    if(newNote) {
-      let newNoteData = newNote.data.note
-      let noteList = [...notes, newNoteData]
-      setNotes(noteList)
-      setInputText('')
-    }
+
+      const uuidParams = notes.length ? notes.slice(-1) : '';
+
+      const newNote = await axios.post('/notes', {
+        title: inputText,
+        body: '',
+        description: '',
+        refUuid: notes.length ? uuidParams[0].uuid: uuidParams,
+      })
+      if(newNote) {
+        let newNoteData = newNote.data.note
+        let noteList = [...notes, newNoteData]
+        setNotes(noteList)
+        setInputText('')
+      }
     } catch(error) {
       console.log('error', error)
     }
@@ -66,22 +71,49 @@ export default function Home({notes, setNotes}) {
   }
   const saveEditNote = async(e) => {
     if(isNoteEditing) {
-      try {
-        e.preventDefault()
-        setNoteOption('')
-        const editData = {
-          ...isNoteEditing,
-          title: noteTextInput,
+      // if(e._reactName === "onSubmit") e.preventDefault()
+      e.preventDefault()
+      setNoteOption('')
+      const newNoteList = notes;
+      const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
+
+      if(isRefUuid) {
+        try {
+          const editData = {
+            title: noteTextInput,
+            refUuid: isRefUuid,
+            body: '',
+            description: '',
+            type: 'Text',
+            checked: false,
+          }
+          
+          const createNewNote = await axios.post('/notes', editData)
+          if(!createNewNote) return console.log('error', error)
+
+          newNoteList[noteEditingId] = createNewNote.data.note
+          setNotes(newNoteList)
+          setRefUuid('')
+          setNoteEditing(null)
+        } catch (error) {
+          console.log('error', error)
         }
-        const newNoteList = notes;
-        const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
-        newNoteList[noteEditingId] = editData
-        setNotes(newNoteList)
-        const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
-        if(!editNoteData) return console.log('error', error)
-        setNoteEditing(null)
-      } catch(error) {
-        console.log('error', error)
+      } else {
+        try {          
+          const editData = {
+            ...isNoteEditing,
+            title: noteTextInput,
+          }
+          
+          const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
+          newNoteList[noteEditingId] = editData
+          setNotes(newNoteList)
+          const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
+          if(!editNoteData) return console.log('error', error)
+          setNoteEditing(null)
+        } catch(error) {
+          console.log('error', error)
+        }
       }
     }
   }
@@ -99,6 +131,7 @@ export default function Home({notes, setNotes}) {
   }
 
   const handleAddBtn = (index) => {
+    const uuidParams = notes.length ? notes[index].uuid : '';
     const newAItem = {
       uuid: Date.now(),
       title: '',
@@ -106,7 +139,9 @@ export default function Home({notes, setNotes}) {
       type: 'Text',
       checked: false,
     }
-    const newItemArr = notes
+
+    setRefUuid(uuidParams)
+    const newItemArr = notes;
     newItemArr.splice(index + 1, 0, newAItem)
     setNotes(newItemArr)
     setNoteEditing(newAItem)
