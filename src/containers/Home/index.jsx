@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react'
+import {useNavigate} from 'react-router-dom'
 import Note from '../Note'
 import axios from '../../axios'
 import addIcon from '../../assets/icons/add.svg'
@@ -7,7 +8,7 @@ import editIcon from '../../assets/icons/edit.svg'
 import noteOptionIcon from '../../assets/icons/note-options.svg'
 import Upload from '../UploadImage'
 
-export default function Home({notes, setNotes}) {
+export default function Home() {
   const [inputText, setInputText] = useState('')
   const [hoveredItem, setHoveredItem] = useState()
   const [noteOption, setNoteOption] = useState('')
@@ -18,6 +19,27 @@ export default function Home({notes, setNotes}) {
   const dragItem = useRef();
   const dragOverItem = useRef();
   const [isDragActive, setDragActive] = useState()
+  const [notes, setNotes] = useState([])
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    getNotes()
+  },[])
+  const getNotes = async() => {
+    try {
+      const getNotes = await axios.get('/notes', { withCredentials: true })
+      setNotes(getNotes.data)
+    } catch(error) {
+      console.log('error', error)
+    }
+  }
+
+  const logoutHandler = async() => {
+    const logout = await axios.post('/users/logout')
+    if(!logout) console.log('unable to logout')
+    navigate(`/app/login`)
+    
+  }
 
   const createNote = async(e) => {
     e.preventDefault()
@@ -179,6 +201,7 @@ export default function Home({notes, setNotes}) {
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null}>
       {/* <Upload /> */}
+      <Logout logoutHandler={logoutHandler} />
       <h1 className="header item-header-margin">Note App</h1>
       <div className="home-note-container">
         {notes && notes.map((note, index) => { 
@@ -241,6 +264,14 @@ const NoteOptions = ({note, editNote, deleteNote}) => {
         <img className='note-opt-icon' src={editIcon} />
         <p>Edit</p>
       </div>
+    </div>
+  )
+}
+
+const Logout = ({logoutHandler}) => {
+  return(
+    <div className='flex w-full'>
+      <button onClick={logoutHandler} className='bg-red-200 mx-2 px-2 py-1'>Logout</button>
     </div>
   )
 }

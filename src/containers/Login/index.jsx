@@ -23,7 +23,8 @@ function Login() {
     const login = await axios.post('/users/login', loginParams)
     if(!login) return console.log('error', login)
     setLoginParams('')
-    console.log('Successfully registered')
+    navigate(`/app/notes`)
+    console.log('Successfully login')
   }
   return (
     <div className="bg-white dark:bg-gray-900">
@@ -49,8 +50,8 @@ function Login() {
                     <div className="mt-8">
                         <form onSubmit={e=>submitFormHandler(e)}>
                             <div>
-                                <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
-                                <input type="email" name="email" id="email" placeholder="example@example.com" className="input-field"  value={loginParams.firstName} onChange={updateField} />
+                                <label htmlFor="username" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
+                                <input type="email" name="username" id="username" placeholder="example@example.com" className="input-field"  value={loginParams.username} onChange={updateField} />
                             </div>
 
                             <div className="mt-6">
@@ -59,7 +60,7 @@ function Login() {
                                     <a href="#" className="text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline">Forgot password?</a>
                                 </div>
 
-                                <input type="password" name="password" id="password" placeholder="Your Password" className="input-field"  value={loginParams.firstName} onChange={updateField} />
+                                <input type="password" name="password" id="password" placeholder="Your Password" className="input-field"  value={loginParams.password} onChange={updateField} />
                             </div>
 
                             <div className="mt-6">

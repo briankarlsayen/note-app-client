@@ -8,19 +8,19 @@ import { useEffect, useState } from 'react'
 import axios from './axios'
 
 function App() {
-  const [notes, setNotes] = useState()
+  // const [notes, setNotes] = useState()
 
-  useEffect(() => {
-    getNotes()
-  },[])
-  const getNotes = async() => {
-    try {
-      const getNotes = await axios.get('/notes')
-      setNotes(getNotes.data)
-    } catch(error) {
-      console.log('error', error)
-    }
-  }
+  // useEffect(() => {
+  //   getNotes()
+  // },[])
+  // const getNotes = async() => {
+  //   try {
+  //     const getNotes = await axios.get('/notes')
+  //     setNotes(getNotes.data)
+  //   } catch(error) {
+  //     console.log('error', error)
+  //   }
+  // }
 
   return (
     <div className="App">
@@ -28,7 +28,7 @@ function App() {
         <Route path="/app/item/:id" element={<Item />} />
         <Route path="/app/login" element={<Login />} />
         <Route path="/app/register" element={<Register />} />
-        <Route path="/app/*" element={<Home notes={notes} setNotes={setNotes} />} />
+        <Route path="/app/*" element={<Home />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="/" element={<Navigate to='/app/login' replace />} />
         <Route path="*" element={<Navigate to='/404' replace />} />
