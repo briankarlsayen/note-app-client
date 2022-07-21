@@ -22,9 +22,15 @@ function Login() {
     e.preventDefault()
     const login = await axios.post('/users/login', loginParams)
     if(!login) return console.log('error', login)
-    setLoginParams('')
+    setLoginParams({
+        username: '',
+        password: ''
+    })
+    if(!login.data.success) return console.log(login.data.message)
+    localStorage.setItem('token', login.data.token)
     navigate(`/app/notes`)
-    console.log('Successfully login')
+    console.log('login', login)
+    // console.log('Successfully login')
   }
   return (
     <div className="bg-white dark:bg-gray-900">

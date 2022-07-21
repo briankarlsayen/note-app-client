@@ -27,7 +27,7 @@ export default function Home() {
   },[])
   const getNotes = async() => {
     try {
-      const getNotes = await axios.get('/notes', { withCredentials: true })
+      const getNotes = await axios.get('/notes')
       setNotes(getNotes.data)
     } catch(error) {
       console.log('error', error)

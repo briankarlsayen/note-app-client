@@ -86,6 +86,7 @@ function Item() {
       }
 
       const newItem = await axios.post('/items', params)
+      console.log('newItem',newItem)
       if(newItem) {
         let newItemData = newItem.data.item
         setItems([...items, newItemData])
