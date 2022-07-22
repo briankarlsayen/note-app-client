@@ -10,7 +10,7 @@ function Register() {
     password: '',
     mobileNo: ''
   })
-
+  const [ showResponseMsg, setResponseMsg ] = useState('')
   const updateField = e => {
     setRegisterParams({
       ...registerParams,
@@ -33,10 +33,26 @@ function Register() {
 
   const submitFormHandler = async(e) => {
     e.preventDefault()
-    const register = await axios.post('/users/register', registerParams)
-    if(!register) return console.log('error', register)
-    setRegisterParams('')
-    console.log('Successfully registered')
+    try {
+      const register = await axios.post('/users/register', registerParams)
+      if(!register) return console.log('error', register)
+      setRegisterParams({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        mobileNo: ''
+      })
+      console.log('register', register)
+      setResponseMsg(register.data)
+    } catch(error) {
+      console.log('error', error)
+      if(error.response.data.message) {
+        setResponseMsg(error.response.data)
+      } else {
+        setResponseMsg({success: false, message: 'Please fill up all fields'})
+      }
+    }
   }
   
   return (
@@ -82,7 +98,7 @@ function Register() {
                                 <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">Password</label>
                                 <input type="password" name="password" id="password" placeholder="Your Password" className="input-field" value={registerParams.password} onChange={updateField} />
                             </div>
-
+                            <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
                             <div className="mt-6">
                                 <button type="submit" className="login-btn"> Sign in </button>
                             </div>

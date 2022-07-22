@@ -9,20 +9,6 @@ import axios from 'axios'
 
 
 function App() {
-  // const [notes, setNotes] = useState()
-
-  // useEffect(() => {
-  //   getNotes()
-  // },[])
-  // const getNotes = async() => {
-  //   try {
-  //     const getNotes = await axios.get('/notes')
-  //     setNotes(getNotes.data)
-  //   } catch(error) {
-  //     console.log('error', error)
-  //   }
-  // }
-
   return (
     <div className="App">
       <Routes>

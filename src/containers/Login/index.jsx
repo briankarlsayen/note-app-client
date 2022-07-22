@@ -8,6 +8,11 @@ function Login() {
     username: '',
     password: '',
   })
+  const [ showResponseMsg, setResponseMsg ] = useState({
+    success: '',
+    message: '',
+  })
+
   const updateField = e => {
     setLoginParams({
       ...loginParams,
@@ -20,17 +25,20 @@ function Login() {
 
   const submitFormHandler = async(e) => {
     e.preventDefault()
-    const login = await axios.post('/users/login', loginParams)
-    if(!login) return console.log('error', login)
-    setLoginParams({
-        username: '',
-        password: ''
-    })
-    if(!login.data.success) return console.log(login.data.message)
-    localStorage.setItem('token', login.data.token)
-    navigate(`/app/notes`)
-    console.log('login', login)
-    // console.log('Successfully login')
+    try {
+      const login = await axios.post('/users/login', loginParams)
+      if(!login) return console.log('error', login)
+      setLoginParams({
+          username: '',
+          password: ''
+      })
+      if(!login.data.success) return console.log(login.data.message)
+      localStorage.setItem('token', login.data.token)
+      navigate(`/app/notes`)
+    } catch(error) {
+      console.log('error', error)
+      if(!error.response.data.success) setResponseMsg(error.response.data)
+    }
   }
   return (
     <div className="bg-white dark:bg-gray-900">
@@ -49,7 +57,6 @@ function Login() {
                 <div className="flex-1">
                     <div className="text-center">
                         <h2 className="text-4xl font-bold text-center text-gray-700 dark:text-white">Login</h2>
-                        
                         <p className="mt-3 text-gray-500 dark:text-gray-300">Login to access your account</p>
                     </div>
 
@@ -59,7 +66,6 @@ function Login() {
                                 <label htmlFor="username" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
                                 <input type="email" name="username" id="username" placeholder="example@example.com" className="input-field"  value={loginParams.username} onChange={updateField} />
                             </div>
-
                             <div className="mt-6">
                                 <div className="flex justify-between mb-2">
                                     <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">Password</label>
@@ -68,14 +74,13 @@ function Login() {
 
                                 <input type="password" name="password" id="password" placeholder="Your Password" className="input-field"  value={loginParams.password} onChange={updateField} />
                             </div>
-
-                            <div className="mt-6">
+                            <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
+                            <div className="mt-62">
                                 <button
                                     className="login-btn">
                                     Sign in
                                 </button>
                             </div>
-
                         </form>
 
                         <p className="mt-6 text-sm text-center text-gray-400">Don&#x27;t have an account yet? <span href="#" onClick={handleClick} className="login-redirect">Register</span>.</p>

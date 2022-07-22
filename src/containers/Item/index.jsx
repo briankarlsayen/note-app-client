@@ -1,4 +1,3 @@
-import React from 'react'
 import { useEffect, useState, useRef } from 'react'
 import axios from '../../axios'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -66,15 +65,17 @@ function Item() {
 
   const createItem = async(e) => {
     e.preventDefault()
+    console.log('inputText', inputText)
     try {
+      const lastItemUuid = items.length ? items[items.length - 1].uuid : null
       let params;
       if(isURL(inputText)) {
-        // console.log('bookmark')
         params = {
           noteUuid: id,
           title: inputText,
           body: '',
           type: 'Bookmark',
+          refUuid: lastItemUuid,
         }
       } else {
         params ={
@@ -82,6 +83,7 @@ function Item() {
           title: inputText,
           body: '',
           type: 'Text',
+          refUuid: lastItemUuid,
         }
       }
 
@@ -135,7 +137,6 @@ function Item() {
   }
   const saveEditItem = async(e) => {
     if(isItemEditing) {
-      // if(e._reactName === "onSubmit") e.preventDefault()
       e.preventDefault()
       setItemOption('')
       const newItemList = items;
@@ -143,18 +144,31 @@ function Item() {
 
       if(isRefUuid) {
         try {
-          console.log('isItemEditing', isItemEditing)
-          const editData = {
-            noteUuid: id,
-            title: editTextInput,
-            refUuid: isRefUuid,
-            body: '',
-            description: '',
-            type: 'Text',
-            checked: false,
+          let params;
+          if(isURL(editTextInput)) {
+            params = {
+              noteUuid: id,
+              title: editTextInput,
+              refUuid: isRefUuid,
+              body: '',
+              description: '',
+              type: 'Bookmark',
+              checked: false,
+
+            }
+          } else {
+            params ={
+              noteUuid: id,
+              title: editTextInput,
+              refUuid: isRefUuid,
+              body: '',
+              description: '',
+              type: 'Text',
+              checked: false,
+            }
           }
           
-          const createNewItem = await axios.post('/items', editData)
+          const createNewItem = await axios.post('/items', params)
           if(!createNewItem) return console.log('error', error)
 
           newItemList[itemEditingId] = createNewItem.data.item
@@ -166,15 +180,15 @@ function Item() {
         }
       } else {
         try {
-          const editData = {
+          const params = {
             ...isItemEditing,
             title: editTextInput,
           }
           // const newItemList = items;
           // const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
-          newItemList[itemEditingId] = editData
+          newItemList[itemEditingId] = params
           setItems(newItemList)
-          const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, editData)
+          const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, params)
           if(!editNoteData) return console.log('error', error)
           setItemEditing('')
         } catch(error) {
