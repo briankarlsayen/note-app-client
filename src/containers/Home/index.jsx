@@ -7,7 +7,7 @@ import deleteIcon from '../../assets/icons/delete.svg'
 import editIcon from '../../assets/icons/edit.svg'
 import noteOptionIcon from '../../assets/icons/note-options.svg'
 import Upload from '../UploadImage'
-
+import Navbar from '../../components/Navbar'
 export default function Home() {
   const [inputText, setInputText] = useState('')
   const [hoveredItem, setHoveredItem] = useState()
@@ -201,7 +201,7 @@ export default function Home() {
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null}>
       {/* <Upload /> */}
-      <Logout logoutHandler={logoutHandler} />
+      {/* <Logout logoutHandler={logoutHandler} /> */}
       <h1 className="header item-header-margin">Note App</h1>
       <div className="home-note-container">
         {notes && notes.map((note, index) => { 

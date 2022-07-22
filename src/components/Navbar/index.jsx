@@ -1,9 +1,9 @@
 import React from 'react'
-import Logout from '../Logout'
+import Profile from '../Profile'
 function Navbar() {
   return (
-    <div className="flex w-full items-end">
-      <Logout />
+    <div className="flex flex-col-reverse w-full items-end min-h-[5vh] align-middle">
+      <Profile />
     </div>
   )
 }

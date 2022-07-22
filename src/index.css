@@ -34,7 +34,7 @@ input[type=number] {
 
 @layer components {
   .home-container {
-    @apply flex flex-col items-center bg-gray-50 w-full py-8 h-full relative min-h-screen;
+    @apply flex flex-col items-center bg-gray-50 w-full pb-4 h-full relative min-h-[95vh];
   }
   .home-note-container {
     @apply rounded max-w-[900px] w-full leading-normal;

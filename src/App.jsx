@@ -4,13 +4,12 @@ import Item from './containers/Item'
 import Login from './containers/Login'
 import Register from './containers/Register'
 import {Routes, Route, Navigate} from 'react-router-dom';
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-
+import Navbar from './components/Navbar'
 
 function App() {
   return (
     <div className="App">
+      <Navbar />
       <Routes>
         <Route path="/app/item/:id" element={<Item />} />
         <Route path="/app/login" element={<Login />} />
