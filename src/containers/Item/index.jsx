@@ -251,10 +251,10 @@ function Item() {
 
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
-      <div className="back-btn-container" onClick={()=>navigate('/app')}>
+      {/* <div className="back-btn-container" onClick={()=>navigate('/app')}>
         <img className="back-btn-icon" src={backIcon} />
         <p>Back</p>
-      </div>
+      </div> */}
       <h1 className="header item-header-margin">{note.title}</h1>
       <div className="home-note-container">
         {items && items.map((item, index) => {
