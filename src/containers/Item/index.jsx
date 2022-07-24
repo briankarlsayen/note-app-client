@@ -7,6 +7,8 @@ import backIcon from '../../assets/icons/back.svg'
 import deleteIcon from '../../assets/icons/delete.svg'
 import editIcon from '../../assets/icons/edit.svg'
 import Skeleton from '../../components/Skeleton'
+import Options from '../../components/List/Options'
+import InputBar from '../../components/List/InputBar'
 
 function Item() {
   const {id} = useParams();
@@ -19,6 +21,7 @@ function Item() {
   const [editTextInput, setEditTextInput] = useState('')
   const [isDragActive, setDragActive] = useState()
   const [isRefUuid, setRefUuid] = useState('')
+  const [createItemCB, setCreateItemCB] = useState(false)
 
   const refNoteInput = useRef(null)  
   const dragItem = useRef();
@@ -66,11 +69,12 @@ function Item() {
 
   const createItem = async(e) => {
     e.preventDefault()
-    console.log('inputText', inputText)
     try {
       const lastItemUuid = items.length ? items[items.length - 1].uuid : null
       let params;
       if(isURL(inputText)) {
+        setCreateItemCB(true)
+        setCreateItemType('bookmark')
         params = {
           noteUuid: id,
           title: inputText,
@@ -79,6 +83,7 @@ function Item() {
           refUuid: lastItemUuid,
         }
       } else {
+        setCreateItemType('text')
         params ={
           noteUuid: id,
           title: inputText,
@@ -89,10 +94,12 @@ function Item() {
       }
 
       const newItem = await axios.post('/items', params)
+      
       console.log('newItem',newItem)
       if(newItem) {
         let newItemData = newItem.data.item
         setItems([...items, newItemData])
+        setCreateItemCB(false)
         setInputText('')
       }
     } catch(error) {
@@ -135,11 +142,14 @@ function Item() {
   }
   const saveEditItem = async(e) => {
     if(isItemEditing) {
-      e.preventDefault()
+      console.log('e', e)
+      if(e.type === 'submit') e.preventDefault()
+      
       setItemOption('')
       const newItemList = items;
       const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
-
+      console.log('editTextInput', editTextInput)
+      console.log('isUrl', isURL(editTextInput))
       if(isRefUuid) {
         try {
           let params;
@@ -165,8 +175,8 @@ function Item() {
               checked: false,
             }
           }
-          
           const createNewItem = await axios.post('/items', params)
+          console.log('createNewItem', createNewItem)
           if(!createNewItem) return console.log('error', error)
 
           newItemList[itemEditingId] = createNewItem.data.item
@@ -268,7 +278,7 @@ function Item() {
                       <img className="item-opt-icon" src={noteOptionIcon} />
                     </div>
                   </div>
-                  { item.uuid === itemOption ? <ItemOptions item={item} deleteItem={deleteItem} editItem={editItem} saveEditItem={saveEditItem} /> : null }
+                  { item.uuid === itemOption ? <Options list={item} deleteList={deleteItem} editList={editItem} /> : null }
     
                   { 
                     item.type === "Text" && <ItemList 
@@ -302,9 +312,23 @@ function Item() {
                   <div className='item-list-margin'></div>
                 </div>
               )
-            })
+            })}
+            { createItemCB ? 
+              // createItemType === 'text' 
+              //   ? <div className='item-container align-middle items-center'>
+              //       <div className='h-7 w-7 bg-gray-200 mr-2 rounded-sm animate-pulse'></div>
+              //       <div className='h-7 w-7 bg-gray-200 mr-2 rounded-sm animate-pulse'></div>
+              //       <div className='h-10 w-full bg-gray-200 rounded-sm animate-pulse'></div>
+              //       <div className='item-list-margin'></div>
+              //     </div> : 
+                <div className='item-container align-middle items-center animate-pulse'>
+                  <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>
+                  <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>
+                  <div className='item-bookmark bg-gray-200'></div>
+                  <div className='item-list-margin'></div>
+                </div>
+              : <InputBar createList={createItem} setInputText={setInputText} inputText={inputText} />
             }
-          <ItemInput createItem={createItem} setInputText={setInputText} inputText={inputText}/>
           </div>
         : <Skeleton />
       }
@@ -342,7 +366,7 @@ const ItemBookmark = ({url, title, body, description, image, type, item, imageUr
   let convertImg = `data:${type};base64,${base64String}`
   return(
     <div className={className}>
-      <div className="item-bookmark" onClick={()=> window.open(url, "_blank")}>
+      <div className="item-bookmark item-bookmark-hover" onClick={()=> window.open(url, "_blank")}>
       {/* <div onClick={()=> window.open(url, "_blank")} className={`${isDragActive === index ? 'item-drag-hovered item-bookmark' : 'item-bookmark'}`}> */}
         <div className="item-bookmark-left">
           <p className="item-bookmark-title">{title}</p>
@@ -363,27 +387,4 @@ const ItemBookmark = ({url, title, body, description, image, type, item, imageUr
   )
 }
 
-const ItemInput = ({createItem, setInputText, inputText}) => {
-  return(
-    <form className="home-note-container item-input-display" onSubmit={(e)=>createItem(e)}>
-      <div className="item-input-margin"></div>      
-      <input className='item-input' type='text' placeholder="Input new note" onChange={(e)=>setInputText(e.target.value)} value={inputText}/>
-    </form>
-  )
-}
-
-const ItemOptions = ({item, editItem, deleteItem}) => {
-  return(
-    <div className="note-opt-container note-opt-position"> 
-      <div className="note-opt-item" onClick={()=>deleteItem(item)}>
-        <img className='note-opt-icon' src={deleteIcon} />
-        <p>Delete</p>
-      </div>
-      <div className="note-opt-item" onClick={() => editItem(item)}>
-        <img className='note-opt-icon' src={editIcon} />
-        <p>Edit</p>
-      </div>
-    </div>
-  )
-}
 export default Item

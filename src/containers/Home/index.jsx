@@ -9,6 +9,9 @@ import noteOptionIcon from '../../assets/icons/note-options.svg'
 import Skeleton from '../../components/Skeleton'
 import Upload from '../UploadImage'
 import Navbar from '../../components/Navbar'
+import Options from '../../components/List/Options'
+import InputBar from '../../components/List/InputBar'
+
 export default function Home() {
   const [inputText, setInputText] = useState('')
   const [hoveredItem, setHoveredItem] = useState()
@@ -94,8 +97,7 @@ export default function Home() {
   }
   const saveEditNote = async(e) => {
     if(isNoteEditing) {
-      // if(e._reactName === "onSubmit") e.preventDefault()
-      e.preventDefault()
+      if(e.type === 'submit') e.preventDefault()
       setNoteOption('')
       const newNoteList = notes;
       const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
@@ -223,7 +225,7 @@ export default function Home() {
                     <img className="item-opt-icon" src={noteOptionIcon} />
                   </div>
                 </div>
-                { note.uuid === noteOption ? <NoteOptions note={note} deleteNote={deleteNote} editNote={editNote} /> : null }
+                { note.uuid === noteOption ? <Options list={note} deleteList={deleteNote} editList={editNote} /> : null }
                   
                 <Note key={note.uuid}
                   id={note.uuid} 
@@ -240,33 +242,9 @@ export default function Home() {
               </div>
             )
           })}
-          <NoteInput createNote={createNote} setInputText={setInputText} inputText={inputText} />
+          <InputBar createList={createNote} setInputText={setInputText} inputText={inputText} />
         </div> : <Skeleton />
       }
-    </div>
-  )
-}
-
-const NoteInput = ({createNote, setInputText, inputText}) => {
-  return(
-    <form className="home-note-container item-input-display" onSubmit={(e)=>createNote(e)}>
-      <div className="item-input-margin"></div>  
-      <input className='item-input' type='text' placeholder="Input new note" onChange={(e)=>setInputText(e.target.value)} value={inputText}/>
-    </form>
-  )
-}
-
-const NoteOptions = ({note, editNote, deleteNote}) => {
-  return(
-    <div key={note.uuid} className="note-opt-container note-opt-position"> 
-      <div className="note-opt-item" onClick={()=>deleteNote(note)}>
-        <img className='note-opt-icon' src={deleteIcon} />
-        <p>Delete</p>
-      </div>
-      <div className="note-opt-item" onClick={() => editNote(note)}>
-        <img className='note-opt-icon' src={editIcon} />
-        <p>Edit</p>
-      </div>
     </div>
   )
 }

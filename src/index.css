@@ -120,7 +120,10 @@ input[type=number] {
   }
 
   .item-bookmark {
-    @apply w-full h-36 bg-white border rounded-md hover:bg-gray-100 hover:cursor-pointer grid grid-cols-3 gap-4;
+    @apply w-full h-36 bg-white border rounded-md hover:cursor-pointer grid grid-cols-3 gap-4;
+  }
+  .item-bookmark-hover {
+    @apply hover:bg-gray-100;
   }
   .item-bookmark-left {
     @apply px-4 align-middle my-auto col-span-2;
