@@ -30,8 +30,8 @@ export default function Profile() {
   }, [])
 
   return(      
-    <div className="relative inline-block">
-      <button onClick={() => setDropShow(!isDropShow)} className="relative z-10 flex items-center p-2 text-sm text-gray-600 bg-white border border-transparent rounded-md dark:text-white dark:bg-gray-800">
+    <div className="relative inline-block bg-gray-50">
+      <button onClick={() => setDropShow(!isDropShow)} className="relative z-10 flex items-center p-2 text-sm text-gray-600 bg-gray-50 border border-transparent rounded-md dark:text-white dark:bg-gray-800">
         <p className='px-2'>{userData && `${userData.firstName} ${userData.lastName}`}</p>
         <span className="font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono">{userData && `${userData.firstName[0]}${userData.lastName[0]}`}</span>
       </button>
