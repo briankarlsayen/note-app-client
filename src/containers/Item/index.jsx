@@ -6,6 +6,7 @@ import noteOptionIcon from '../../assets/icons/note-options.svg'
 import backIcon from '../../assets/icons/back.svg'
 import deleteIcon from '../../assets/icons/delete.svg'
 import editIcon from '../../assets/icons/edit.svg'
+import Skeleton from '../../components/Skeleton'
 
 function Item() {
   const {id} = useParams();
@@ -107,10 +108,7 @@ function Item() {
       const newItemList = items;
       const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
       newItemList[itemEditingId] = updatedData
-      setItems(newItemList)
-
-      // const finishItem = await axios.put(`/items/editcheck/${params.uuid}`)
-      // if(!finishItem) return console.log('error', error)    
+      setItems(newItemList)  
     } catch(error) {
       console.log('error', error)
     }
@@ -184,8 +182,6 @@ function Item() {
             ...isItemEditing,
             title: editTextInput,
           }
-          // const newItemList = items;
-          // const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
           newItemList[itemEditingId] = params
           setItems(newItemList)
           const editNoteData = await axios.put(`/items/edit/${isItemEditing.uuid}`, params)
@@ -251,66 +247,67 @@ function Item() {
 
   return (
     <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
-      {/* <div className="back-btn-container" onClick={()=>navigate('/app')}>
-        <img className="back-btn-icon" src={backIcon} />
-        <p>Back</p>
-      </div> */}
-      <h1 className="header item-header-margin">{note.title}</h1>
-      <div className="home-note-container">
-        {items && items.map((item, index) => {
-          return (
-            <div key={item.uuid} className="item-container" 
-            onMouseEnter={(e)=> itemHovered(item)} 
-            onMouseLeave={()=> setHoveredItem('')}
-            onDragStart={(e) => dragStart(e, index)}
-            onDragEnter={(e) => dragEnter(e, index)}
-            onDragEnd={drop}
-            draggable>
-              <div className={`${item.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
-                <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
-                  <img className="item-add-icon" src={addIcon} />
+      {
+        items ? 
+        <div className="home-note-container">
+            <h1 className="header item-header-margin">{note.title}</h1>
+            {items.map((item, index) => {
+              return (
+                <div key={item.uuid} className="item-container" 
+                onMouseEnter={(e)=> itemHovered(item)} 
+                onMouseLeave={()=> setHoveredItem('')}
+                onDragStart={(e) => dragStart(e, index)}
+                onDragEnter={(e) => dragEnter(e, index)}
+                onDragEnd={drop}
+                draggable>
+                  <div className={`${item.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
+                    <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
+                      <img className="item-add-icon" src={addIcon} />
+                    </div>
+                    <div className={`${itemOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(item)}>
+                      <img className="item-opt-icon" src={noteOptionIcon} />
+                    </div>
+                  </div>
+                  { item.uuid === itemOption ? <ItemOptions item={item} deleteItem={deleteItem} editItem={editItem} saveEditItem={saveEditItem} /> : null }
+    
+                  { 
+                    item.type === "Text" && <ItemList 
+                    title={item.title} 
+                    checked={item.checked} 
+                    item={item} 
+                    finishItem={finishItem} 
+                    saveEditItem={saveEditItem} 
+                    refNoteInput={refNoteInput} 
+                    editTextInput={editTextInput} 
+                    setEditTextInput={setEditTextInput}
+                    isItemEditing={isItemEditing} 
+                    className={`${isDragActive === index ? 'item-drag-hovered note-container' : 'note-container'}`} 
+                    />
+                  }
+                  { 
+                    item.type === "Bookmark" && <ItemBookmark 
+                    url={item.title} 
+                    title={item.preview ? item.preview.title : item.title} 
+                    body={item.body} 
+                    description={item.preview ? item.preview.description : item.title} 
+                    image={item.preview ? item.preview.image.data : null }
+                    type={item.preview ? item.preview.type : null}
+                    imageUrl={item.preview ? item.preview.imageUrl : null}
+                    item={item} 
+                    isDragActive={isDragActive}
+                    index={index}
+                    className={`${isDragActive === index ? 'item-drag-hovered item-bookmark-container' : 'item-bookmark-container'}`}
+                    />
+                  }
+                  <div className='item-list-margin'></div>
                 </div>
-                <div className={`${itemOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(item)}>
-                  <img className="item-opt-icon" src={noteOptionIcon} />
-                </div>
-              </div>
-              { item.uuid === itemOption ? <ItemOptions item={item} deleteItem={deleteItem} editItem={editItem} saveEditItem={saveEditItem} /> : null }
-
-              { 
-                item.type === "Text" && <ItemList 
-                title={item.title} 
-                checked={item.checked} 
-                item={item} 
-                finishItem={finishItem} 
-                saveEditItem={saveEditItem} 
-                refNoteInput={refNoteInput} 
-                editTextInput={editTextInput} 
-                setEditTextInput={setEditTextInput}
-                isItemEditing={isItemEditing} 
-                className={`${isDragActive === index ? 'item-drag-hovered note-container' : 'note-container'}`} 
-                />
-              }
-              { 
-                item.type === "Bookmark" && <ItemBookmark 
-                url={item.title} 
-                title={item.preview ? item.preview.title : item.title} 
-                body={item.body} 
-                description={item.preview ? item.preview.description : item.title} 
-                image={item.preview ? item.preview.image.data : null }
-                type={item.preview ? item.preview.type : null}
-                imageUrl={item.preview ? item.preview.imageUrl : null}
-                item={item} 
-                isDragActive={isDragActive}
-                index={index}
-                className={`${isDragActive === index ? 'item-drag-hovered item-bookmark-container' : 'item-bookmark-container'}`}
-                />
-              }
-              <div className='item-list-margin'></div>
-            </div>
-          )
-        })}
-      </div>
-      <ItemInput createItem={createItem} setInputText={setInputText} inputText={inputText}/>
+              )
+            })
+            }
+          <ItemInput createItem={createItem} setInputText={setInputText} inputText={inputText}/>
+          </div>
+        : <Skeleton />
+      }
     </div>
   )
 }

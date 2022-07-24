@@ -19,9 +19,7 @@ export default function Profile() {
         const result = await axios.get('/users')
         const data = {
           ...result.data,
-          fullName: 'hahaha'
         }
-        console.log('data', data)
         setUserData(result.data)
       } catch(error) {
         console.log('error', error)

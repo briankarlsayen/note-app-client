@@ -9,7 +9,6 @@ import Test from './components/Test'
 import Main from './components/Main'
 function App() {
   const logged = localStorage.getItem('token')
-  console.log('logged', logged)
   return (
     <div className="App">
       <Routes>

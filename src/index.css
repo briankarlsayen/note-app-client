@@ -51,7 +51,7 @@ input[type=number] {
     @apply text-4xl font-bold max-w-[900px] w-full my-4 text-gray-700;
   }
   .item-header-margin {
-    @apply ml-[122px]
+    @apply ml-[64px]
   }
   .title {
     @apply text-sm leading-[1.1rem];
