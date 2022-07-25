@@ -3,6 +3,8 @@ import {Routes, Route, useNavigate, Navigate} from 'react-router-dom';
 import Home from '../../containers/Home'
 import Item from '../../containers/Item'
 import Navbar from '../Navbar';
+import userRestrict from '../../HOC/userRestrict';
+
 function Main() {
   return (
     <div className="note-app">
@@ -26,4 +28,4 @@ const NotFound = () => {
   )
 }
 
-export default Main
+export default userRestrict(Main)
