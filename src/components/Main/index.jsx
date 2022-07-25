@@ -3,6 +3,7 @@ import {Routes, Route, useNavigate, Navigate} from 'react-router-dom';
 import Home from '../../containers/Home'
 import Item from '../../containers/Item'
 import Navbar from '../Navbar';
+import NotFound from '../../containers/Error/NotFound';
 function Main() {
   return (
     <div className="note-app">
@@ -18,12 +19,12 @@ function Main() {
   )
 }
 
-const NotFound = () => {
-  return(
-    <div>
-      <h1>Page not found</h1>
-    </div>
-  )
-}
+// const NotFound = () => {
+//   return(
+//     <div>
+//       <h1>Page not found</h1>
+//     </div>
+//   )
+// }
 
 export default Main
