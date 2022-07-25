@@ -74,7 +74,6 @@ function Item() {
       let params;
       if(isURL(inputText)) {
         setCreateItemCB(true)
-        setCreateItemType('bookmark')
         params = {
           noteUuid: id,
           title: inputText,
@@ -83,7 +82,6 @@ function Item() {
           refUuid: lastItemUuid,
         }
       } else {
-        setCreateItemType('text')
         params ={
           noteUuid: id,
           title: inputText,

@@ -5,7 +5,7 @@ import Item from '../../containers/Item'
 import Navbar from '../Navbar';
 function Main() {
   return (
-    <div>
+    <div className="note-app">
       <Navbar />
       <Routes>
         <Route path="/item/:id" element={<Item />} />

@@ -10,7 +10,7 @@ import Main from './components/Main'
 function App() {
   const logged = localStorage.getItem('token')
   return (
-    <div className="App">
+    <div className="note-app">
       <Routes>
         <Route path="/app/login" element={<Login />} />
         <Route path="/app/register" element={<Register />} />
