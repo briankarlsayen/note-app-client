@@ -9,7 +9,7 @@ import editIcon from '../../assets/icons/edit.svg'
 import Skeleton from '../../components/Skeleton'
 import Options from '../../components/List/Options'
 import InputBar from '../../components/List/InputBar'
-
+import { isUuid, isURL } from '../../middlewares/validator'
 function Item() {
   const {id} = useParams();
   const [items, setItems] = useState()
@@ -41,30 +41,28 @@ function Item() {
   }, [isItemEditing])
 
   const getItemDetails = async() => {
-    try {
-      const itemData = await axios.get(`/items/getbynote/${id}`)
-      if(itemData) return setItems(itemData.data)
-    } catch(error) {
-      console.log('error', error)
+    if(isUuid(id) === false) {
+      navigate('/404')
+    } else {
+      try {
+        const itemData = await axios.get(`/items/getbynote/${id}`)
+        if(itemData) return setItems(itemData.data)
+      } catch(error) {
+        console.log('error', error)
+      }
     }
   }
   const getNote = async() => {
-    try {
-      const noteData = await axios.get(`/notes/${id}`)
-      return setNote(noteData.data)
-    } catch(error) {
-      console.log('error', error)
+    if(isUuid(id) === false) {
+      navigate('/404')
+    } else {
+      try {
+        const noteData = await axios.get(`/notes/${id}`)
+        return setNote(noteData.data)
+      } catch(error) {
+        console.log('error', error)
+      }
     }
-  }
-
-  const isURL = (str) => {
-    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    return !!pattern.test(str);
   }
 
   const createItem = async(e) => {
@@ -92,8 +90,6 @@ function Item() {
       }
 
       const newItem = await axios.post('/items', params)
-      
-      console.log('newItem',newItem)
       if(newItem) {
         let newItemData = newItem.data.item
         setItems([...items, newItemData])
