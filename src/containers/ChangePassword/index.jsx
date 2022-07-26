@@ -1,28 +1,44 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../axios'
 
 function ChangePassword() {
+  const {id} = useParams();
+  const navigate = useNavigate()
   const [ showResponseMsg, setResponseMsg ] = useState({
     success: '',
     message: '',
   })
-  const [ emailSent, setEmailSent ] = useState(false)
-  const navigate = useNavigate()
+  const [ passwordParams, setPasswordParams ] = useState({
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const updateField = e => {
+    setPasswordParams({
+      ...passwordParams,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const submitFormHandler = async(e) => {
     e.preventDefault()
     try {
-      const forgotPassword = await axios.post('/users/forgotpassword', { email })
-      if(!forgotPassword) return console.log('error', login)
-      setEmail('')
-      if(!forgotPassword.data.success) return console.log(forgotPassword.data.message)
+      if(passwordParams.newPassword !== passwordParams.confirmPassword) return setResponseMsg({success: false, message: 'Password does not match'})
+      setResponseMsg({success: true, message: 'Password match'})
+      const changePassword = await axios.put(`/users/changepassword/${id}`, { password: passwordParams.newPassword })
+      if(!changePassword.data.success) return console.log(forgotPassword.data.message)
+      setPasswordParams({
+        newPassword: '',
+        confirmPassword: ''
+      })
       setResponseMsg(forgotPassword.data)
-      setEmailSent(true)
     } catch(error) {
       console.log('error', error)
       if(!error.response.data.success) setResponseMsg(error.response.data)
     }
+  }
+  const toLogin = () => {
+    navigate('/app/login')
   }
   return (
     <div className="bg-white dark:bg-gray-900">
@@ -41,14 +57,18 @@ function ChangePassword() {
               <div className="flex-1">
                 <div className="text-center">
                     <h2 className="text-4xl font-bold text-center text-gray-700 dark:text-white">Change Password</h2>
-                    <p className="mt-3 text-gray-500 dark:text-gray-300">Enter the email of your account to receive instruction.</p>
+                    <p className="mt-3 text-gray-500 dark:text-gray-300">Enter your new password.</p>
                 </div>
 
-                {/* <div className="mt-8">
+                <div className="mt-8">
                   <form onSubmit={e=>submitFormHandler(e)}>
                     <div>
-                      <label htmlFor="username" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
-                      <input type="email" name="username" id="username" placeholder="example@example.com" className="input-field"  value={email} onChange={(e)=>setEmail(e.target.value)} />
+                      <label htmlFor="newPassword" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">New password</label>
+                      <input type="password" name="newPassword" id="newPassword" placeholder="******" className="input-field"  value={passwordParams.newPassword} onChange={updateField} />
+                    </div>
+                    <div className="mt-6">
+                      <label htmlFor="confirmPassword" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Retype password</label>
+                      <input type="password" name="confirmPassword" id="confirmPassword" placeholder="******" className="input-field"  value={passwordParams.confirmPassword} onChange={updateField} />
                     </div>
                     <div className="mt-6">
                       <button
@@ -59,7 +79,7 @@ function ChangePassword() {
                     <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
                   </form>
                   <p className="mt-6 text-sm text-center text-gray-400 cursor-pointer">Remembered your password? <span onClick={toLogin} className="login-redirect">Login</span>.</p>
-                </div> */}
+                </div>
               </div> 
           </div>
         </div>
