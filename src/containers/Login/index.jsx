@@ -23,6 +23,10 @@ function Login() {
     navigate(`/app/register`)
   }
 
+  const handleFPClick = () => {
+    console.log('click')
+    navigate('/forgot-password')
+  }
   const submitFormHandler = async(e) => {
     e.preventDefault()
     try {
@@ -69,18 +73,15 @@ function Login() {
                             <div className="mt-6">
                                 <div className="flex justify-between mb-2">
                                     <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">Password</label>
-                                    <a href="#" className="text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline">Forgot password?</a>
+                                    <p onClick={handleFPClick} className="text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline cursor-pointer">Forgot password?</p>
                                 </div>
 
                                 <input type="password" name="password" id="password" placeholder="Your Password" className="input-field"  value={loginParams.password} onChange={updateField} />
                             </div>
-                            <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
-                            <div className="mt-62">
-                                <button
-                                    className="login-btn">
-                                    Sign in
-                                </button>
+                            <div className="mt-6">
+                              <button className="login-btn">Sign in</button>
                             </div>
+                            <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
                         </form>
 
                         <p className="mt-6 text-sm text-center text-gray-400">Don&#x27;t have an account yet? <span href="#" onClick={handleClick} className="login-redirect">Register</span>.</p>
