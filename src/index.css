@@ -51,20 +51,20 @@ input[type=number] {
   }
 
   .header {
-    @apply text-4xl font-bold max-w-[900px] w-full my-4 text-gray-700;
+    @apply text-4xl font-bold max-w-[900px] my-4 text-gray-700 break-all w-[calc(100%-3.5rem)];
   }
   .item-header-margin {
     @apply ml-[64px]
   }
   .title {
-    @apply text-sm leading-[1.1rem];
+    @apply text-[1rem];
   }
   .checked {
     @apply line-through text-gray-500;
   }
   
   .item-container {
-    @apply flex items-center mb-1;
+    @apply flex items-center;
   }
   .item-add-container {
     @apply w-7 h-7 p-1.5 hover:bg-gray-300 cursor-pointer rounded-sm;
@@ -76,13 +76,13 @@ input[type=number] {
     @apply bg-gray-300;
   }
   .note-opt {
-    @apply flex mr-2 opacity-0;
+    @apply flex opacity-0;
   }
   /* .note-container {
     @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 ease-in duration-150 shadow-lg;
   } */
   .note-container {
-    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-4 items-center mb-2;
+    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-2 items-center mb-1;
   }
   .note-title {
     @apply text-base text-black group-hover:text-white font-normal;
@@ -103,7 +103,7 @@ input[type=number] {
     @apply w-10;
   }
   .item-list-container {
-    @apply w-full h-12 flex;
+    @apply w-full flex break-all;
   }
   .note-opt-container {
     @apply absolute right-0 z-20 w-56 py-2 mt-2 bg-white rounded-md shadow-xl dark:bg-gray-800;

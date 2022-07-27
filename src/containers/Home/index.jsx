@@ -207,7 +207,9 @@ export default function Home() {
       {/* <Logout logoutHandler={logoutHandler} /> */}
       { notes ? 
         <div className="home-note-container">
-          <h1 className="header item-header-margin">Note App</h1>
+          <div className="flex flex-row-reverse">
+            <h1 className="header">Note App</h1>
+          </div>
           {notes.map((note, index) => { 
             return (
               <div key={note.uuid} className='item-container'

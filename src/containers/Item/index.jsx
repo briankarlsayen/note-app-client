@@ -254,7 +254,9 @@ function Item() {
       {
         items ? 
         <div className="home-note-container">
-            <h1 className="header item-header-margin">{note.title}</h1>
+            <div className="flex flex-row-reverse">
+              <h1 className="header">{note.title}</h1>
+            </div>
             {items.map((item, index) => {
               return (
                 <div key={item.uuid} className="item-container" 
