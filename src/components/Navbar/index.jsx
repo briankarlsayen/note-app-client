@@ -9,9 +9,9 @@ function Navbar() {
   const locationArr = location.pathname.split('/')
   
   return (
-    <div className="flex w-full items-end min-h-[5vh] align-middle justify-between">
+    <div className="flex w-full h-12 items-end align-middle justify-between">
       { locationArr.length === 4 && locationArr[2] === 'item' ?  
-        <div onClick={()=>navigate('/app/notes')} className="m-2 px-2 py-1 my-auto align-middle items-center flex hover:bg-gray-100 rounded-md cursor-pointer">
+        <div onClick={()=>navigate('/app/notes')} className="m-2 my-auto align-middle items-center flex hover:bg-gray-100 rounded-md cursor-pointer">
           <img className="back-btn-icon" src={backIcon} />
           <p className='text-sm'>Back</p>
         </div> : <div></div>

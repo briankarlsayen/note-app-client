@@ -75,9 +75,12 @@ export default function Home() {
   }
 
   const itemClicked = (note) => {
-    setNoteOption(note.uuid)
-    setHoveredItem(note.uuid)
-    // setNoteEditing('')
+    if(note.uuid === noteOption) {
+      setNoteOption('')
+    } else {
+      setNoteOption(note.uuid)
+      setHoveredItem(note.uuid)
+    }
   }
   const deleteNote = async(note) => {
     try {
@@ -202,59 +205,61 @@ export default function Home() {
   
 
   return (
-    <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null}>
+    <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null} onMouseDown={e=>console.log(e)}>
       {/* <Upload /> */}
       {/* <Logout logoutHandler={logoutHandler} /> */}
-      { notes ? 
-        <div className="home-note-container">
-          <div className="flex flex-row-reverse">
-            <h1 className="header">Note App</h1>
-          </div>
-          {notes.map((note, index) => { 
-            return (
-              <div key={note.uuid} className='item-container'
-              onMouseEnter={(e)=> itemHovered(note)} 
-              onMouseLeave={itemNotHovered}
-              onDragStart={(e) => dragStart(e, index)}
-              onDragEnter={(e) => dragEnter(e, index)}
-              onDragEnd={drop}
-              draggable>
-                <div className={`${note.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
-                  <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
-                    <img className="item-add-icon" src={addIcon} />
+      <div className="container-margin">
+        { notes ? 
+          <div className="home-note-container">
+            <div className="flex flex-row-reverse">
+              <h1 className="header">Note App</h1>
+            </div>
+            {notes.map((note, index) => { 
+              return (
+                <div key={note.uuid} className='item-container'
+                onMouseEnter={(e)=> itemHovered(note)} 
+                onMouseLeave={itemNotHovered}
+                onDragStart={(e) => dragStart(e, index)}
+                onDragEnter={(e) => dragEnter(e, index)}
+                onDragEnd={drop}
+                draggable>
+                  <div className={`${note.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
+                    <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
+                      <img className="item-add-icon" src={addIcon} />
+                    </div>
+                    <div className={`${noteOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(note)}>
+                      <img className="item-opt-icon" src={noteOptionIcon} />
+                    </div>
                   </div>
-                  <div className={`${noteOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(note)}>
-                    <img className="item-opt-icon" src={noteOptionIcon} />
-                  </div>
+                  { note.uuid === noteOption ? <Options list={note} deleteList={deleteNote} editList={editNote} /> : null }
+                    
+                  <Note key={note.uuid}
+                    id={note.uuid} 
+                    title={note.title} 
+                    date={note.createdAt} 
+                    items={note.items} 
+                    isNoteEditing={isNoteEditing} 
+                    refNoteInput={refNoteInput} 
+                    setNoteTextInput={setNoteTextInput} 
+                    noteTextInput={noteTextInput} 
+                    saveEditNote={saveEditNote}
+                    className={`${isDragActive === index ? 'item-drag-hovered note-container' : 'note-container'}`} 
+                    />
                 </div>
-                { note.uuid === noteOption ? <Options list={note} deleteList={deleteNote} editList={editNote} /> : null }
-                  
-                <Note key={note.uuid}
-                  id={note.uuid} 
-                  title={note.title} 
-                  date={note.createdAt} 
-                  items={note.items} 
-                  isNoteEditing={isNoteEditing} 
-                  refNoteInput={refNoteInput} 
-                  setNoteTextInput={setNoteTextInput} 
-                  noteTextInput={noteTextInput} 
-                  saveEditNote={saveEditNote}
-                  className={`${isDragActive === index ? 'item-drag-hovered note-container' : 'note-container'}`} 
-                  />
-              </div>
-            )
-          })}
-          <InputBar createList={createNote} setInputText={setInputText} inputText={inputText} />
-        </div> : <Skeleton />
-      }
+              )
+            })}
+            <InputBar createList={createNote} setInputText={setInputText} inputText={inputText} />
+          </div> : <Skeleton />
+        }
+      </div>
+      
     </div>
   )
 }
 
 const Logout = ({logoutHandler}) => {
   return(
-    <div className='flex w-full'>
-      <button onClick={logoutHandler} className='bg-red-200 mx-2 px-2 py-1'>Logout</button>
+    <div className='h-full absolute bg-red-200'>
     </div>
   )
 }

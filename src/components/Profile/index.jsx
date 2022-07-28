@@ -30,10 +30,13 @@ export default function Profile() {
   }, [])
 
   return(      
-    <div className="relative inline-block bg-gray-50">
-      <button onClick={() => setDropShow(!isDropShow)} className="relative z-10 flex items-center p-2 text-sm text-gray-600 bg-gray-50 border border-transparent rounded-md dark:text-white dark:bg-gray-800">
-        <p className='px-2'>{userData && `${userData.firstName} ${userData.lastName}`}</p>
-        <span className="font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono">{userData && `${userData.firstName[0]}${userData.lastName[0]}`}</span>
+    <div className="relative flex items-center bg-gray-50 pr-2">
+      <p className='px-0.5'>{userData && `${userData.firstName} ${userData.lastName}`}</p>
+      <button onClick={() => setDropShow(!isDropShow)} className="relative z-10 flex items-center p-2 text-sm w-12 h-12
+      text-gray-600 bg-gray-50 border border-transparent rounded-md dark:text-white dark:bg-gray-800">
+        <span className="font-bold w-full h-full bg-gray-400 text-white rounded-full flex items-center justify-center font-mono p-4">
+          {userData && `${userData.firstName[0]}${userData.lastName[0]}`}
+        </span>
       </button>
       { isDropShow && <DropDown logoutHandler={logoutHandler} userData={userData}/> }
         
@@ -43,9 +46,12 @@ export default function Profile() {
 
 const DropDown = ({logoutHandler, userData}) => {
   return(
-    <div className="absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
-      <li className="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-        <span className="font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono">{userData && `${userData.firstName[0]}${userData.lastName[0]}`}</span>
+    <div className="absolute z-20 w-56 py-2 top-12 right-4 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
+      <li className="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform 
+      dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+        <span className="font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono">
+          {userData && `${userData.firstName[0]}${userData.lastName[0]}`}
+        </span>
         <div className="mx-1">
           <h1 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{userData && `${userData.firstName} ${userData.lastName}`}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">{userData && userData.email}</p>
@@ -53,12 +59,14 @@ const DropDown = ({logoutHandler, userData}) => {
       </li>
       <hr className="border-gray-200 dark:border-gray-700 " />
       
-      <li className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+      <li className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300
+       hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
         view profile
       </li>
       
 
-      <li onClick={logoutHandler} className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+      <li onClick={logoutHandler} className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 
+      transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
         Sign Out
       </li>
     </div>
