@@ -34,6 +34,7 @@ function Register() {
   const submitFormHandler = async(e) => {
     e.preventDefault()
     try {
+      interceptRequest()
       const register = await axios.post('/users/register', registerParams)
       if(!register) return console.log('error', register)
       setRegisterParams({
@@ -53,6 +54,18 @@ function Register() {
         setResponseMsg({success: false, message: 'Please fill up all fields'})
       }
     }
+  }
+
+  const interceptRequest = () => {
+    axios.interceptors.request.use(
+      (config) => {
+        setResponseMsg({
+          success: true,
+          message: 'Processing regisration...'
+        })
+        return config
+      },
+    )
   }
   
   return (
@@ -76,35 +89,34 @@ function Register() {
                     </div>
 
                     <div className="mt-8">
-                        <form onSubmit={e=>submitFormHandler(e)}>
-                            <div>
-                                <label htmlFor="firstName" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">First Name</label>
-                                <input type="text" name="firstName" id="firstName" placeholder="Juan" className="input-field" value={registerParams.firstName} onChange={updateField} />
-                            </div>
-                            <div className="mt-2">
-                                <label htmlFor="lastName" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Last Name</label>
-                                <input type="text" name="lastName" id="lastName" placeholder="Luna" className="input-field" value={registerParams.lastName} onChange={updateField} />
-                            </div>
-                            <div className="mt-2">
-                                <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
-                                <input type="email" name="email" id="email" placeholder="juanluns@example.com" className="input-field" value={registerParams.email} onChange={updateField} />
-                            </div>
-                            <div className="mt-2">
-                                <label htmlFor="mobileNo" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Mobile Number</label>
-                                <input type="number" name="mobileNo" id="mobileNo" placeholder="09xxxxxxxxx" maxLength={Number(11)} className="input-field" value={registerParams.mobileNo} onChange={updateMobileField} />
-                            </div>
+                      <form onSubmit={e=>submitFormHandler(e)}>
+                          <div>
+                              <label htmlFor="firstName" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">First Name</label>
+                              <input type="text" name="firstName" id="firstName" placeholder="Juan" className="input-field" value={registerParams.firstName} onChange={updateField} required/>
+                          </div>
+                          <div className="mt-2">
+                              <label htmlFor="lastName" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Last Name</label>
+                              <input type="text" name="lastName" id="lastName" placeholder="Luna" className="input-field" value={registerParams.lastName} onChange={updateField} required/>
+                          </div>
+                          <div className="mt-2">
+                              <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
+                              <input type="email" name="email" id="email" placeholder="juanluns@example.com" className="input-field" value={registerParams.email} onChange={updateField} required/>
+                          </div>
+                          <div className="mt-2">
+                              <label htmlFor="mobileNo" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Mobile Number</label>
+                              <input type="number" name="mobileNo" id="mobileNo" placeholder="09xxxxxxxxx" maxLength={Number(11)} className="input-field" value={registerParams.mobileNo} onChange={updateMobileField} required/>
+                          </div>
 
-                            <div className="mt-2">
-                                <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">Password</label>
-                                <input type="password" name="password" id="password" placeholder="Your Password" className="input-field" value={registerParams.password} onChange={updateField} />
-                            </div>
-                            <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
-                            <div className="mt-6">
-                                <button type="submit" className="login-btn"> Sign in </button>
-                            </div>
-
-                        </form>
-                        <p className="mt-6 text-sm text-center text-gray-400">Already have an account? <span href="#" onClick={handleClick} className="login-redirect">Login</span>.</p>
+                          <div className="mt-2">
+                              <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">Password</label>
+                              <input type="password" name="password" id="password" placeholder="Your Password" className="input-field" value={registerParams.password} onChange={updateField} required/>
+                          </div>
+                          <p className={`my-2 text-sm text-center ${!showResponseMsg.success ? 'text-red-500' : 'text-green-400'}`}>{showResponseMsg.message}</p>
+                          
+                          <button type="submit" className="login-btn"> Sign in </button>
+                          
+                      </form>
+                      <p className="mt-6 text-sm text-center text-gray-400">Already have an account? <span onClick={()=>handleClick()} className="login-redirect">Login</span>.</p>
                     </div>
                 </div>
             </div>

@@ -37,7 +37,7 @@ input[type=number] {
     @apply bg-gray-50
   }
   .home-container {
-    @apply flex flex-col items-center bg-gray-50 w-full pb-4 h-full relative min-h-[95vh];
+    @apply flex flex-col items-center bg-gray-50 w-full pb-4 h-full relative min-h-[95vh] px-8;
   }
   .home-note-container {
     @apply rounded max-w-[900px] w-full leading-normal;
@@ -57,7 +57,7 @@ input[type=number] {
     @apply ml-[64px]
   }
   .title {
-    @apply text-[1rem];
+    @apply text-[.9rem];
   }
   .checked {
     @apply line-through text-gray-500;
@@ -78,9 +78,6 @@ input[type=number] {
   .note-opt {
     @apply flex opacity-0;
   }
-  /* .note-container {
-    @apply flex w-full bg-white hover:bg-gray-100 hover:cursor-pointer p-4 ease-in duration-150 shadow-lg;
-  } */
   .note-container {
     @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-2 items-center mb-1;
   }
@@ -91,10 +88,10 @@ input[type=number] {
     @apply opacity-40 ;
   }
   .item-input {
-    @apply w-full p-4 outline-none h-12 text-sm mr-[2.3rem] bg-gray-50;
+    @apply w-full p-6 outline-none h-12 mr-[2.3rem] bg-gray-50 text-[.9rem];
   }
   .item-input-margin {
-    @apply w-[54px] mr-4;
+    @apply w-[54px];
   }
   .item-input-display {
     @apply flex;

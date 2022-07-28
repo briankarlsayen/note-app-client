@@ -30,6 +30,7 @@ function Login() {
   const submitFormHandler = async(e) => {
     e.preventDefault()
     try {
+      interceptRequest()
       const login = await axios.post('/users/login', loginParams)
       if(!login) return console.log('error', login)
       setLoginParams({
@@ -44,6 +45,21 @@ function Login() {
       if(!error.response.data.success) setResponseMsg(error.response.data)
     }
   }
+
+  const interceptRequest = () => {
+    axios.interceptors.request.use(
+      (config) => {
+        setResponseMsg({
+          success: true,
+          message: 'Logging in...',
+        })
+        console.log('config', config)
+        return config
+      },
+    )
+  }
+  
+
   return (
     <div className="bg-white dark:bg-gray-900">
         <div className="flex justify-center h-screen">
@@ -68,7 +84,7 @@ function Login() {
                         <form onSubmit={e=>submitFormHandler(e)}>
                             <div>
                                 <label htmlFor="username" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
-                                <input type="email" name="username" id="username" placeholder="example@example.com" className="input-field"  value={loginParams.username} onChange={updateField} />
+                                <input type="email" name="username" id="username" placeholder="example@example.com" className="input-field"  value={loginParams.username} onChange={updateField} required />
                             </div>
                             <div className="mt-6">
                                 <div className="flex justify-between mb-2">
@@ -76,7 +92,7 @@ function Login() {
                                     <p onClick={handleFPClick} className="text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline cursor-pointer">Forgot password?</p>
                                 </div>
 
-                                <input type="password" name="password" id="password" placeholder="Your Password" className="input-field"  value={loginParams.password} onChange={updateField} />
+                                <input type="password" name="password" id="password" placeholder="Your Password" className="input-field"  value={loginParams.password} onChange={updateField} required/>
                             </div>
                             <div className="mt-6">
                               <button className="login-btn">Sign in</button>
