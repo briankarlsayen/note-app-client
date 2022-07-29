@@ -7,11 +7,11 @@ const Options = ({list, editList, deleteList}) => {
     <div key={list.uuid} className="note-opt-container note-opt-position"> 
       <div className="note-opt-item" onClick={() => editList(list)}>
         <img className='note-opt-icon' src={editIcon} />
-        <p className='md:visible invisible'>Edit</p>
+        <p className='md:inline-block hidden'>Edit</p>
       </div>
       <div className="note-opt-item" onClick={()=>deleteList(list)}>
         <img className='note-opt-icon' src={deleteIcon} />
-        <p className='md:visible invisible'>Delete</p>
+        <p className='md:inline-block hidden'>Delete</p>
       </div>
     </div>
   )
