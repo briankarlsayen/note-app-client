@@ -38,13 +38,6 @@ export default function Home() {
     }
   }
 
-  const logoutHandler = async() => {
-    const logout = await axios.post('/users/logout')
-    if(!logout) console.log('unable to logout')
-    navigate(`/app/login`)
-    
-  }
-
   const createNote = async(e) => {
     e.preventDefault()
     try {
@@ -70,7 +63,7 @@ export default function Home() {
   const itemHovered = (item) => {
     if(!noteOption) return setHoveredItem(item.uuid)
   }
-  const itemNotHovered = (item) => {
+  const itemNotHovered = () => {
     if(!noteOption) setHoveredItem('')
   }
 
@@ -133,8 +126,8 @@ export default function Home() {
             title: noteTextInput,
           }
           
-          const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
-          newNoteList[noteEditingId] = editData
+          const editingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
+          newNoteList[editingId] = editData
           setNotes(newNoteList)
           const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
           if(!editNoteData) return console.log('error', error)
@@ -151,12 +144,6 @@ export default function Home() {
       refNoteInput.current.focus()
     }
   }, [isNoteEditing])
-
-  const saveEdit = (e) => {
-    setNoteOption('')
-    setHoveredItem('')
-    saveEditNote(e)
-  }
 
   const handleAddBtn = (index) => {
     const uuidParams = notes.length ? notes[index].uuid : '';
@@ -202,10 +189,30 @@ export default function Home() {
     if(!updatePosition) return console.log('error', error)
   };
 
-  
+  const handleOptionClick = (e) => {
+    console.log('click', e.target.classList)
+    const restrictClass = [ "item-input", "note-opt-icon", "item-opt-icon", "item-opt-active", "note-opt-item" ]
+    let restrict = true;
+    for(let item1 of restrictClass) {
+      for(let item2 of e.target.classList) {
+        if(item1 === item2) restrict = false;
+      }
+    }
+    if(noteOption) {
+      if(restrict) {
+        if(e.target.className !== "item-opt-container") {
+          setNoteOption('')
+          setHoveredItem('')
+          // TODO save only if changed
+          saveEditNote(e)
+        }
+      }
+    }
+  }
 
   return (
-    <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e) : null} onMouseDown={e=>console.log(e)}>
+    <div className="home-container" 
+    onMouseDown={ e=> handleOptionClick(e) }>
       {/* <Upload /> */}
       {/* <Logout logoutHandler={logoutHandler} /> */}
       <div className="container-margin">

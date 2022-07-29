@@ -115,11 +115,15 @@ function Item() {
     }
   }
   const itemHovered = (item) => {
-    setHoveredItem(item.uuid)
+    if(!itemOption) return setHoveredItem(item.uuid)
   }
-  const itemClicked = (note) => {
-    setItemOption(note.uuid)
-    setHoveredItem(note.uuid)
+  const itemClicked = (item) => {
+    if(item.uuid === itemOption) {
+      setItemOption('')
+    } else {
+      setItemOption(item.uuid)
+      setHoveredItem(item.uuid)
+    }
   }
   const deleteItem = async(item) => {
     try {
@@ -136,14 +140,10 @@ function Item() {
   }
   const saveEditItem = async(e) => {
     if(isItemEditing) {
-      console.log('e', e)
       if(e.type === 'submit') e.preventDefault()
-      
       setItemOption('')
       const newItemList = items;
       const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
-      console.log('editTextInput', editTextInput)
-      console.log('isUrl', isURL(editTextInput))
       if(isRefUuid) {
         try {
           let params;
@@ -156,7 +156,6 @@ function Item() {
               description: '',
               type: 'Bookmark',
               checked: false,
-
             }
           } else {
             params ={
@@ -170,7 +169,6 @@ function Item() {
             }
           }
           const createNewItem = await axios.post('/items', params)
-          console.log('createNewItem', createNewItem)
           if(!createNewItem) return console.log('error', error)
 
           newItemList[itemEditingId] = createNewItem.data.item
@@ -200,10 +198,29 @@ function Item() {
   const editItem = async(item) => {
     setItemEditing(item)
   }
-  const saveEdit = (e) => {
-    setItemOption('')
-    setHoveredItem('')
-    saveEditItem(e)
+
+  const itemNotHovered = () => {
+    if(!itemOption) setHoveredItem('')
+  }
+
+  const handleOptionClick = (e) => {
+    const restrictClass = [ "item-input", "note-opt-icon", "item-opt-icon", "item-opt-active", "note-opt-item" ]
+    let restrict = true;
+    for(let item1 of restrictClass) {
+      for(let item2 of e.target.classList) {
+        if(item1 === item2) restrict = false;
+      }
+    }
+    if(itemOption) {
+      if(restrict) {
+        if(e.target.className !== "item-opt-container") {
+          setItemOption('')
+          setHoveredItem('')
+          // TODO save only if changed
+          saveEditItem(e)
+        }
+      }
+    }
   }
 
   const handleAddBtn = (index) => {
@@ -248,9 +265,10 @@ function Item() {
     const updatePosition = await axios.put(`/items/reposition/${ uuid }`, { refUuid: refUuid })
     if(!updatePosition) return console.log('error', error)
   };
-
+  console.log('itemOption', itemOption)
   return (
-    <div className="home-container" onClick={e => e.target.className === "home-container" ? saveEdit(e)  : null}>
+    <div className="home-container" onMouseDown={ e=> handleOptionClick(e) }>
+      <div className="container-margin">
       {
         items ? 
         <div className="home-note-container">
@@ -261,7 +279,7 @@ function Item() {
               return (
                 <div key={item.uuid} className="item-container" 
                 onMouseEnter={(e)=> itemHovered(item)} 
-                onMouseLeave={()=> setHoveredItem('')}
+                onMouseLeave={itemNotHovered}
                 onDragStart={(e) => dragStart(e, index)}
                 onDragEnter={(e) => dragEnter(e, index)}
                 onDragEnd={drop}
@@ -309,25 +327,13 @@ function Item() {
                 </div>
               )
             })}
-            { createItemCB ? 
-              // createItemType === 'text' 
-              //   ? <div className='item-container align-middle items-center'>
-              //       <div className='h-7 w-7 bg-gray-200 mr-2 rounded-sm animate-pulse'></div>
-              //       <div className='h-7 w-7 bg-gray-200 mr-2 rounded-sm animate-pulse'></div>
-              //       <div className='h-10 w-full bg-gray-200 rounded-sm animate-pulse'></div>
-              //       <div className='item-list-margin'></div>
-              //     </div> : 
-                <div className='item-container align-middle items-center animate-pulse'>
-                  <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>
-                  <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>
-                  <div className='item-bookmark bg-gray-200'></div>
-                  <div className='item-list-margin'></div>
-                </div>
+            { createItemCB ? <CreateSkeleton />
               : <InputBar createList={createItem} setInputText={setInputText} inputText={inputText} />
             }
           </div>
         : <Skeleton />
       }
+      </div>
     </div>
   )
 }
@@ -379,6 +385,17 @@ const ItemBookmark = ({url, title, body, description, image, type, item, imageUr
         }
         
       </div>
+    </div>
+  )
+}
+
+const CreateSkeleton = () => {
+  return(
+    <div className='item-container align-middle items-center animate-pulse'>
+      <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>
+      <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>
+      <div className='item-bookmark bg-gray-200'></div>
+      <div className='item-list-margin'></div>
     </div>
   )
 }

@@ -93,7 +93,7 @@ input[type=number] {
     @apply opacity-40 ;
   }
   .item-input {
-    @apply p-2 outline-none h-12 bg-gray-50 text-[.9rem] flex-1;
+    @apply p-2 outline-none h-12 bg-gray-50 text-[.9rem] flex-1 w-full;
   }
   .item-input-margin {
     @apply w-12;
@@ -114,7 +114,7 @@ input[type=number] {
     @apply px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white flex items-center cursor-pointer;
   }
   .note-opt-position {
-    @apply md:left-[-131px] left-[-10px];
+    @apply md:left-[-131px] left-[-28px];
   }
   .note-opt-icon {
     @apply w-4 h-4 mr-2;
