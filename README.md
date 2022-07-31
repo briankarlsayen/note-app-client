@@ -10,4 +10,4 @@ A notion knockoff, reverse engineered notion functionality such as save text and
 - puppeteer
 
 ### Backend
-[server](https://github.com/briankarlsayen/note-app-server)
+note app backend server - [link](https://github.com/briankarlsayen/note-app-server)
