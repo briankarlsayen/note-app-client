@@ -1,16 +1,14 @@
 import React, {useState, useRef, useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
 import Note from '../Note'
 import axios from '../../axios'
 import addIcon from '../../assets/icons/add.svg'
-import deleteIcon from '../../assets/icons/delete.svg'
-import editIcon from '../../assets/icons/edit.svg'
 import noteOptionIcon from '../../assets/icons/note-options.svg'
 import Skeleton from '../../components/Skeleton'
 import Upload from '../UploadImage'
 import Navbar from '../../components/Navbar'
 import Options from '../../components/List/Options'
 import InputBar from '../../components/List/InputBar'
+import useWindowDimensions from '../../components/useWindowDimensions'
 
 export default function Home() {
   const [inputText, setInputText] = useState('')
@@ -24,10 +22,12 @@ export default function Home() {
   const dragOverItem = useRef();
   const [isDragActive, setDragActive] = useState()
   const [notes, setNotes] = useState()
-  const navigate = useNavigate()
-
+  const { height, width } = useWindowDimensions();
+  const [ userName, setUserName ] = useState()
+  
   useEffect(() => {
     getNotes()
+    getUser()
   },[])
   const getNotes = async() => {
     try {
@@ -37,6 +37,17 @@ export default function Home() {
       console.log('error', error)
     }
   }
+  const getUser = async() => {
+    try {
+      const result = await axios.get('/users')
+      const capitalizeFirstName = result.data.firstName.charAt(0).toUpperCase()
+      const newFirstName = capitalizeFirstName + result.data.firstName.slice(1) + `'s`
+      setUserName(newFirstName)
+    } catch(error) {
+      console.log('error', error)
+    }
+  }
+  
 
   const createNote = async(e) => {
     e.preventDefault()
@@ -77,13 +88,13 @@ export default function Home() {
   }
   const deleteNote = async(note) => {
     try {
+      setNoteOption('')
       const newNoteList = notes;
       const noteDeletedId = notes.findIndex(data => data.uuid === note.uuid)
       newNoteList.splice(noteDeletedId, 1)
       setNotes(newNoteList)
       const deleteNoteData = await axios.put(`/notes/delete/${note.uuid}`)
       if(!deleteNoteData) return console.log('error', error)
-      setNoteOption('')
     } catch(error) {
       console.log('error', error)
     }
@@ -92,8 +103,8 @@ export default function Home() {
     setNoteEditing(note)
   }
   const saveEditNote = async(e) => {
-    if(isNoteEditing) {
-      if(e.type === 'submit') e.preventDefault()
+    if(e.type === 'submit') e.preventDefault()
+    if(isNoteEditing && checkInputEmpty()) {
       setNoteOption('')
       const newNoteList = notes;
       const noteEditingId = notes.findIndex(note => note.uuid === isNoteEditing.uuid)
@@ -116,6 +127,7 @@ export default function Home() {
           setNotes(newNoteList)
           setRefUuid('')
           setNoteEditing(null)
+          setNoteTextInput('')
         } catch (error) {
           console.log('error', error)
         }
@@ -132,6 +144,7 @@ export default function Home() {
           const editNoteData = await axios.put(`/notes/edit/${isNoteEditing.uuid}`, editData)
           if(!editNoteData) return console.log('error', error)
           setNoteEditing(null)
+          setNoteTextInput('')
         } catch(error) {
           console.log('error', error)
         }
@@ -190,7 +203,6 @@ export default function Home() {
   };
 
   const handleOptionClick = (e) => {
-    console.log('click', e.target.classList)
     const restrictClass = [ "item-input", "note-opt-icon", "item-opt-icon", "item-opt-active", "note-opt-item" ]
     let restrict = true;
     for(let item1 of restrictClass) {
@@ -208,18 +220,41 @@ export default function Home() {
         }
       }
     }
+    if(isNoteEditing) {
+      if(noteTextInput) {
+        saveEditNote(e)
+      } else {
+        const newNoteList = notes;
+        const noteDeletedId = notes.findIndex((data) => data.uuid === isNoteEditing.uuid)
+        newNoteList.splice(noteDeletedId, 1)
+        setNotes(newNoteList)
+        console.log('note not save because empty')
+        setNoteEditing(null)
+      }
+    } 
   }
 
+  const checkInputEmpty = () => {
+    if(!noteTextInput) {
+      const newNoteList = notes;
+      const noteDeletedId = notes.findIndex((data) => data.uuid === isNoteEditing.uuid)
+      newNoteList.splice(noteDeletedId, 1)
+      setNotes(newNoteList)
+      console.log('note not save because empty')
+      setNoteEditing(null)
+      return false
+    }
+    return true
+  }
   return (
-    <div className="home-container" 
-    onMouseDown={ e=> handleOptionClick(e) }>
+    <div className="home-container">
       {/* <Upload /> */}
       {/* <Logout logoutHandler={logoutHandler} /> */}
       <div className="container-margin">
-        { notes ? 
+        { notes && userName ? 
           <div className="home-note-container">
             <div className="flex flex-row-reverse">
-              <h1 className="header">Note App</h1>
+              <h1 className="header">{userName && `${userName + 'Notes'}` } </h1>
             </div>
             {notes.map((note, index) => { 
               return (
@@ -230,11 +265,11 @@ export default function Home() {
                 onDragEnter={(e) => dragEnter(e, index)}
                 onDragEnd={drop}
                 draggable>
-                  <div className={`${note.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
+                  <div className={`${note.uuid === hoveredItem || width < 640 ? 'note-opt item-hovered' : 'note-opt'}`}>
                     <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
                       <img className="item-add-icon" src={addIcon} />
                     </div>
-                    <div className={`${noteOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(note)}>
+                    <div className={`${note.uuid === noteOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(note)}>
                       <img className="item-opt-icon" src={noteOptionIcon} />
                     </div>
                   </div>
@@ -260,13 +295,6 @@ export default function Home() {
         }
       </div>
       
-    </div>
-  )
-}
-
-const Logout = ({logoutHandler}) => {
-  return(
-    <div className='h-full absolute bg-red-200'>
     </div>
   )
 }

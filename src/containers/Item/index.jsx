@@ -10,6 +10,9 @@ import Skeleton from '../../components/Skeleton'
 import Options from '../../components/List/Options'
 import InputBar from '../../components/List/InputBar'
 import { isUuid, isURL } from '../../middlewares/validator'
+import useWindowDimensions from '../../components/useWindowDimensions'
+import TextareaAutosize from 'react-textarea-autosize';
+
 function Item() {
   const {id} = useParams();
   const [items, setItems] = useState()
@@ -23,10 +26,13 @@ function Item() {
   const [isRefUuid, setRefUuid] = useState('')
   const [createItemCB, setCreateItemCB] = useState(false)
 
+  const [fullHeader, setFullHeader] = useState(false)
+
   const refNoteInput = useRef(null)  
   const dragItem = useRef();
   const dragOverItem = useRef();
   const navigate = useNavigate()
+  const { height, width } = useWindowDimensions();
 
   useEffect(() => {
     getItemDetails()
@@ -107,9 +113,11 @@ function Item() {
         checked: !params.checked,
       }
       const newItemList = items;
-      const itemEditingId = items.findIndex(item => item.uuid === isItemEditing.uuid)
+      const itemEditingId = items.findIndex(item => item.uuid === params.uuid)
       newItemList[itemEditingId] = updatedData
       setItems(newItemList)  
+      const completeItem = await axios.put(`/items/editcheck/${params.uuid}`)
+      if(!completeItem) console.log('unable to update')
     } catch(error) {
       console.log('error', error)
     }
@@ -127,13 +135,13 @@ function Item() {
   }
   const deleteItem = async(item) => {
     try {
+      setItemOption('')
       const newItemList = items;
       const itemDeletedId = items.findIndex(data => data.uuid === item.uuid)
       newItemList.splice(itemDeletedId, 1)
       setItems(newItemList)
       const deleteItemData = await axios.put(`/items/delete/${item.uuid}`)
       if(!deleteItemData) return console.log('error', error)
-      setItemOption('')
     } catch(error) {
       console.log('error', error)
     }
@@ -265,15 +273,15 @@ function Item() {
     const updatePosition = await axios.put(`/items/reposition/${ uuid }`, { refUuid: refUuid })
     if(!updatePosition) return console.log('error', error)
   };
-  console.log('itemOption', itemOption)
+
   return (
     <div className="home-container" onMouseDown={ e=> handleOptionClick(e) }>
       <div className="container-margin">
       {
         items ? 
         <div className="home-note-container">
-            <div className="flex flex-row-reverse">
-              <h1 className="header">{note.title}</h1>
+            <div onClick={() => setFullHeader(!fullHeader)} className="flex flex-row-reverse">
+              <h1 className={!fullHeader ? "header item-header limit-text-lenght" : "header item-header"}>{note.title}</h1>
             </div>
             {items.map((item, index) => {
               return (
@@ -284,11 +292,11 @@ function Item() {
                 onDragEnter={(e) => dragEnter(e, index)}
                 onDragEnd={drop}
                 draggable>
-                  <div className={`${item.uuid === hoveredItem ? 'note-opt item-hovered' : 'note-opt'}`}>
+                  <div className={`${item.uuid === hoveredItem || width < 640 ? 'note-opt item-hovered' : 'note-opt'}`}>
                     <div className="item-add-container" onClick={()=>handleAddBtn(index)}>
                       <img className="item-add-icon" src={addIcon} />
                     </div>
-                    <div className={`${itemOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(item)}>
+                    <div className={`${item.uuid === itemOption ? 'item-opt-container item-opt-active' : 'item-opt-container'}`} onClick={() => itemClicked(item)}>
                       <img className="item-opt-icon" src={noteOptionIcon} />
                     </div>
                   </div>
@@ -327,7 +335,7 @@ function Item() {
                 </div>
               )
             })}
-            { createItemCB ? <CreateSkeleton />
+            { createItemCB ? <BookmarkSkeleton />
               : <InputBar createList={createItem} setInputText={setInputText} inputText={inputText} />
             }
           </div>
@@ -340,10 +348,10 @@ function Item() {
 
 const ItemList = ({title, checked, item, finishItem, isItemEditing, refNoteInput, saveEditItem, setEditTextInput, editTextInput, className}) => {
   return(
-    <div className="item-list-container" onSubmit={(e) => saveEditItem(e)}>
+    <div className="item-list-container">
       { isItemEditing.uuid === item.uuid ? 
-        <form className='home-note-container' onSubmit={(e) => saveEditItem({e, item})}>
-          <input ref={refNoteInput} className='item-input' type='text' value={editTextInput} onChange={(e)=>setEditTextInput(e.target.value)}/>
+        <form className='home-note-container' onBlur={(e) => saveEditItem(e)}>
+          <TextareaAutosize ref={refNoteInput} className='item-input' type='text' value={editTextInput} onChange={(e)=>setEditTextInput(e.target.value)} maxLength={255}/>
         </form>
         :
         <div className={className} onClick={()=>finishItem(item)}>
@@ -389,7 +397,7 @@ const ItemBookmark = ({url, title, body, description, image, type, item, imageUr
   )
 }
 
-const CreateSkeleton = () => {
+const BookmarkSkeleton = () => {
   return(
     <div className='item-container align-middle items-center animate-pulse'>
       <div className='h-7 w-7 mr-2 rounded-sm animate-pulse'></div>

@@ -53,7 +53,6 @@ function Login() {
           success: true,
           message: 'Logging in...',
         })
-        console.log('config', config)
         return config
       },
     )

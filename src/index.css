@@ -56,13 +56,21 @@ input[type=number] {
   }
 
   .header {
-    @apply text-4xl font-bold max-w-[900px] my-4 text-gray-700 break-all w-[calc(100%-3.5rem)];
+    @apply text-4xl font-bold max-w-[900px] my-4 text-gray-700 break-all w-[calc(100%-3.5rem)] min-h-[40px];
+  }
+
+  .item-header {
+    @apply cursor-pointer;
+  }
+
+  .limit-text-lenght {
+    @apply text-ellipsis whitespace-nowrap overflow-hidden
   }
   .item-header-margin {
     @apply ml-[64px]
   }
   .title {
-    @apply text-[.9rem];
+    @apply text-[.9rem] whitespace-pre-wrap;
   }
   .checked {
     @apply line-through text-gray-500;
@@ -84,7 +92,7 @@ input[type=number] {
     @apply flex opacity-0 w-12;
   }
   .note-container {
-    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-2 items-center mb-1 min-h-[2.5rem];
+    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-2 items-center mb-1 min-h-[2.5rem]
   }
   .note-title {
     @apply text-base text-black group-hover:text-white font-normal;
@@ -93,7 +101,7 @@ input[type=number] {
     @apply opacity-40 ;
   }
   .item-input {
-    @apply p-2 outline-none h-12 bg-gray-50 text-[.9rem] flex-1 w-full;
+    @apply p-2 outline-none h-[2.4rem] bg-gray-50 text-[.9rem] flex-1 w-full mb-[.35rem];
   }
   .item-input-margin {
     @apply w-12;
@@ -121,7 +129,7 @@ input[type=number] {
   }
 
   .item-bookmark-container {
-    @apply flex w-full text-sm mb-2;
+    @apply flex w-full text-sm mb-1 py-2;
   }
 
   .item-bookmark {
@@ -152,7 +160,7 @@ input[type=number] {
     @apply h-56 w-56;
   }
   .item-drag-hovered {
-    @apply border-b-4 border-b-blue-300 mb-1;
+    @apply border-b-4 border-b-blue-300 pb-1;
   }
 
   .input-field {
