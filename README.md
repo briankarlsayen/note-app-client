@@ -1,3 +1,10 @@
-[ ] edit item text not turn into bookmark
-[ ] improve skeleton loading
-  [ ] save note / item count
+# Note app
+
+A notion knockoff, reverse engineered notion functionality such as save text and bookmark, drag and drop, etc.
+
+### Technologies
+- reactjs
+- expressjs
+- postgres
+- sequelize
+- puppeteer
