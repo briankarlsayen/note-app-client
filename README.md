@@ -8,3 +8,6 @@ A notion knockoff, reverse engineered notion functionality such as save text and
 - postgres
 - sequelize
 - puppeteer
+
+### Backend
+[server](https://github.com/briankarlsayen/note-app-server)
