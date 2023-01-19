@@ -18,13 +18,13 @@
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
 }
 
 @layer base {
@@ -34,11 +34,11 @@ input[type=number] {
 
 @layer components {
   .note-app {
-    @apply bg-gray-50
+    @apply bg-gray-50;
   }
 
   .container-margin {
-    @apply w-full xl:px-[25rem] lg:px-[10rem] sm:px-[8rem] !important
+    @apply w-full xl:px-[25rem] lg:px-[10rem] sm:px-[8rem] !important;
   }
 
   .home-container {
@@ -47,12 +47,12 @@ input[type=number] {
   .home-note-container {
     @apply rounded max-w-[900px]  w-full leading-normal;
   }
-  
+
   .back-btn-container {
     @apply flex items-center w-24 rounded-sm absolute top-10 left-10 hover:underline cursor-pointer;
   }
   .back-btn-icon {
-    @apply w-8 h-8
+    @apply w-8 h-8;
   }
 
   .header {
@@ -64,10 +64,10 @@ input[type=number] {
   }
 
   .limit-text-lenght {
-    @apply text-ellipsis whitespace-nowrap overflow-hidden
+    @apply text-ellipsis whitespace-nowrap overflow-hidden;
   }
   .item-header-margin {
-    @apply ml-[64px]
+    @apply ml-[64px];
   }
   .title {
     @apply text-[.9rem] whitespace-pre-wrap;
@@ -75,7 +75,7 @@ input[type=number] {
   .checked {
     @apply line-through text-gray-500;
   }
-  
+
   .item-container {
     @apply flex items-center relative;
   }
@@ -92,13 +92,13 @@ input[type=number] {
     @apply flex opacity-0 w-12;
   }
   .note-container {
-    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-2 items-center mb-1 min-h-[2.5rem]
+    @apply flex w-full bg-gray-50 hover:bg-gray-100 hover:cursor-pointer p-2 items-center mb-1 min-h-[2.5rem];
   }
   .note-title {
     @apply text-base text-black group-hover:text-white font-normal;
   }
   .item-hovered {
-    @apply opacity-40 ;
+    @apply opacity-40;
   }
   .item-input {
     @apply p-2 outline-none h-[2.4rem] bg-gray-50 text-[.9rem] flex-1 w-full mb-[.35rem];
@@ -173,5 +173,9 @@ input[type=number] {
   }
   .login-redirect {
     @apply text-blue-500 focus:outline-none focus:underline hover:underline cursor-pointer;
+  }
+
+  .negative-z {
+    @apply z-[-1];
   }
 }
