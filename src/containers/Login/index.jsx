@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axios";
 import Robot from "../../components/LoadingScreen/robot";
+import GAuth from "./GAuth";
 function Login() {
   const navigate = useNavigate();
   const [loginParams, setLoginParams] = useState({
@@ -164,6 +165,7 @@ function Login() {
                     {showResponseMsg.message}
                   </p>
                 </form>
+                <GAuth navigate={navigate} />
 
                 <p className="mt-6 text-sm text-center text-gray-400">
                   Don&#x27;t have an account yet?{" "}
