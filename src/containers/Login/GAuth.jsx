@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import jwtDecode from "jwt-decode";
 import axios from "../../axios";
 
 const GAuth = ({ navigate }) => {
+  const divRef = useRef(null);
   const handleCredentialResponse = async (response) => {
     console.log("res", response.credential);
     const user = jwtDecode(response.credential);
@@ -15,7 +16,7 @@ const GAuth = ({ navigate }) => {
     if (!login) return console.log("error", login);
     if (!login.data.success) return console.log(login.data.message);
     localStorage.setItem("token", login.data.token);
-    // navigate(`/app/notes`);
+    navigate(`/app/notes`);
   };
 
   const handleAccount = () => {
@@ -33,23 +34,26 @@ const GAuth = ({ navigate }) => {
 
   useEffect(() => {
     /* global google */
-    google.accounts.id.initialize({
-      client_id:
-        "257812684746-u9pgc10helg0hsg8mu6j5l75imer4j0n.apps.googleusercontent.com",
-      callback: handleCredentialResponse,
-    });
-    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-      theme: "outline",
-      size: "large",
-      type: "standard",
-      text: "continue_with",
-    });
-  }, []);
+    if (divRef.current) {
+      const user = google.accounts.id.initialize({
+        client_id:
+          "257812684746-u9pgc10helg0hsg8mu6j5l75imer4j0n.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+      const item = google.accounts.id.renderButton(divRef.current, {
+        theme: "outline",
+        size: "large",
+        type: "standard",
+        text: "continue_with",
+      });
+      console.log("item", item);
+    }
+  }, [divRef.current]);
 
   return (
     <div>
       <p className="py-2">Sign in with google</p>
-      <div id="signInDiv"></div>
+      <div ref={divRef}></div>
       {/* <button className="bg-gray-300" onClick={signOut}>
         Sign out
       </button> */}
