@@ -15,8 +15,8 @@ export default function Profile() {
       google.accounts.id.revoke(user.data?.gauth.sub, (done) => {
         console.log(done.error);
       });
-      google.accounts.id.disableAutoSelect();
-      google.accounts.id.cancel();
+      // google.accounts.id.disableAutoSelect();
+      // google.accounts.id.cancel();
     }
 
     localStorage.removeItem("token");
