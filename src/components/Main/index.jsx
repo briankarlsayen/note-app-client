@@ -29,4 +29,4 @@ function Main() {
 //   )
 // }
 
-export default userRestrict(Main);
+export default Main;

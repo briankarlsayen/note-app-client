@@ -1,85 +1,92 @@
-import React, { useState, useRef, useEffect } from "react";
-import Note from "../Note";
-import axios from "../../axios";
-import addIcon from "../../assets/icons/add.svg";
-import noteOptionIcon from "../../assets/icons/note-options.svg";
-import Skeleton from "../../components/Skeleton";
-import Upload from "../UploadImage";
-import Navbar from "../../components/Navbar";
-import Options from "../../components/List/Options";
-import InputBar from "../../components/List/InputBar";
-import useWindowDimensions from "../../components/useWindowDimensions";
+import React, { useState, useRef, useEffect } from 'react';
+import Note from '../Note';
+import axios from '../../axios';
+import addIcon from '../../assets/icons/add.svg';
+import noteOptionIcon from '../../assets/icons/note-options.svg';
+import Skeleton from '../../components/Skeleton';
+import Upload from '../UploadImage';
+import Navbar from '../../components/Navbar';
+import Options from '../../components/List/Options';
+import InputBar from '../../components/List/InputBar';
+import useWindowDimensions from '../../components/useWindowDimensions';
+import { accountLoginDetailsStore } from '../../store/AccountStore';
+import { shallow } from 'zustand/shallow';
+import { noteDetailsStore } from '../../store/NotesStore';
 
 export default function Home() {
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState('');
   const [hoveredItem, setHoveredItem] = useState();
-  const [noteOption, setNoteOption] = useState("");
-  const [isNoteEditing, setNoteEditing] = useState("");
-  const [noteTextInput, setNoteTextInput] = useState("");
-  const [isRefUuid, setRefUuid] = useState("");
+  const [noteOption, setNoteOption] = useState('');
+  const [isNoteEditing, setNoteEditing] = useState('');
+  const [noteTextInput, setNoteTextInput] = useState('');
+  const [isRefUuid, setRefUuid] = useState('');
   const refNoteInput = useRef(null);
   const dragItem = useRef();
   const dragOverItem = useRef();
   const [isDragActive, setDragActive] = useState();
-  const [notes, setNotes] = useState();
+  const [notesz, setNotes] = useState();
   const { height, width } = useWindowDimensions();
   const [userName, setUserName] = useState();
 
+  const { userInfomation, storeAccDetails } = accountLoginDetailsStore(
+    (state) => state,
+    shallow
+  );
+  const { notes, storeDetails, addNote, removeNote } = noteDetailsStore(
+    (state) => state,
+    shallow
+  );
+
   useEffect(() => {
-    getNotes();
-    getUser();
+    // getNotes();
+    // getUser();
+    storeAccDetails();
+    storeDetails();
   }, []);
-  const getNotes = async () => {
-    try {
-      const getNotes = await axios.get("/notes");
-      setNotes(getNotes.data);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-  const getUser = async () => {
-    try {
-      const result = await axios.get("/users");
-      const capitalizeFirstName = result.data.name.charAt(0).toUpperCase();
-      const newFirstName =
-        capitalizeFirstName + result.data.name.slice(1) + `'s`;
-      setUserName(newFirstName);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
+
+  // const getNotes = async () => {
+  //   try {
+  //     const getNotes = await axios.get('/notes');
+  //     setNotes(getNotes.data);
+  //   } catch (error) {
+  //     console.log('error', error);
+  //   }
+  // };
+  // const getUser = async () => {
+  //   try {
+  //     const result = await axios.get('/users');
+  //     const capitalizeFirstName = result.data.name.charAt(0).toUpperCase();
+  //     const newFirstName =
+  //       capitalizeFirstName + result.data.name.slice(1) + `'s`;
+  //     setUserName(newFirstName);
+  //   } catch (error) {
+  //     console.log('error', error);
+  //   }
+  // };
 
   const createNote = async (e) => {
     e.preventDefault();
     try {
-      const uuidParams = notes.length ? notes.slice(-1) : "";
-
-      const newNote = await axios.post("/notes", {
+      const params = {
         title: inputText,
-        body: "",
-        description: "",
-        refUuid: notes.length ? uuidParams[0].uuid : uuidParams,
-      });
-      if (newNote) {
-        let newNoteData = newNote.data.note;
-        let noteList = [...notes, newNoteData];
-        setNotes(noteList);
-        setInputText("");
-      }
+        loc: 'last',
+      };
+      addNote(params);
+      setInputText('');
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
     }
   };
   const itemHovered = (item) => {
     if (!noteOption) return setHoveredItem(item.uuid);
   };
   const itemNotHovered = () => {
-    if (!noteOption) setHoveredItem("");
+    if (!noteOption) setHoveredItem('');
   };
 
   const itemClicked = (note) => {
     if (note.uuid === noteOption) {
-      setNoteOption("");
+      setNoteOption('');
     } else {
       setNoteOption(note.uuid);
       setHoveredItem(note.uuid);
@@ -87,50 +94,43 @@ export default function Home() {
   };
   const deleteNote = async (note) => {
     try {
-      setNoteOption("");
-      const newNoteList = notes;
-      const noteDeletedId = notes.findIndex((data) => data.uuid === note.uuid);
-      newNoteList.splice(noteDeletedId, 1);
-      setNotes(newNoteList);
-      const deleteNoteData = await axios.put(`/notes/delete/${note.uuid}`);
-      if (!deleteNoteData) return console.log("error", error);
+      setNoteOption('');
+      removeNote(note);
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
     }
   };
   const editNote = async (note) => {
     setNoteEditing(note);
   };
+
   const saveEditNote = async (e) => {
-    if (e.type === "submit") e.preventDefault();
+    if (e.type === 'submit') e.preventDefault();
     if (isNoteEditing && checkInputEmpty()) {
-      setNoteOption("");
+      setNoteOption('');
       const newNoteList = notes;
-      const noteEditingId = notes.findIndex(
-        (note) => note.uuid === isNoteEditing.uuid
-      );
 
       if (isRefUuid) {
         try {
           const editData = {
             title: noteTextInput,
             refUuid: isRefUuid,
-            body: "",
-            description: "",
-            type: "Text",
+            body: '',
+            description: '',
+            type: 'Text',
             checked: false,
+
+            isNoteEditing,
+            loc: 'middle',
           };
 
-          const createNewNote = await axios.post("/notes", editData);
-          if (!createNewNote) return console.log("error", error);
+          addNote(editData);
 
-          newNoteList[noteEditingId] = createNewNote.data.note;
-          setNotes(newNoteList);
-          setRefUuid("");
+          setRefUuid('');
           setNoteEditing(null);
-          setNoteTextInput("");
+          setNoteTextInput('');
         } catch (error) {
-          console.log("error", error);
+          console.log('error', error);
         }
       } else {
         try {
@@ -148,11 +148,11 @@ export default function Home() {
             `/notes/edit/${isNoteEditing.uuid}`,
             editData
           );
-          if (!editNoteData) return console.log("error", error);
+          if (!editNoteData) return console.log('error', error);
           setNoteEditing(null);
-          setNoteTextInput("");
+          setNoteTextInput('');
         } catch (error) {
-          console.log("error", error);
+          console.log('error', error);
         }
       }
     }
@@ -165,12 +165,12 @@ export default function Home() {
   }, [isNoteEditing]);
 
   const handleAddBtn = (index) => {
-    const uuidParams = notes.length ? notes[index].uuid : "";
+    const uuidParams = notes.length ? notes[index].uuid : '';
     const newAItem = {
       uuid: Date.now(),
-      title: "",
-      body: "",
-      type: "Text",
+      title: '',
+      body: '',
+      type: 'Text',
       checked: false,
     };
 
@@ -207,16 +207,16 @@ export default function Home() {
     const updatePosition = await axios.put(`/notes/reposition/${uuid}`, {
       refUuid: refUuid,
     });
-    if (!updatePosition) return console.log("error", error);
+    if (!updatePosition) return console.log('error', error);
   };
 
   const handleOptionClick = (e) => {
     const restrictClass = [
-      "item-input",
-      "note-opt-icon",
-      "item-opt-icon",
-      "item-opt-active",
-      "note-opt-item",
+      'item-input',
+      'note-opt-icon',
+      'item-opt-icon',
+      'item-opt-active',
+      'note-opt-item',
     ];
     let restrict = true;
     for (let item1 of restrictClass) {
@@ -226,9 +226,9 @@ export default function Home() {
     }
     if (noteOption) {
       if (restrict) {
-        if (e.target.className !== "item-opt-container") {
-          setNoteOption("");
-          setHoveredItem("");
+        if (e.target.className !== 'item-opt-container') {
+          setNoteOption('');
+          setHoveredItem('');
           // TODO save only if changed
           saveEditNote(e);
         }
@@ -244,7 +244,7 @@ export default function Home() {
         );
         newNoteList.splice(noteDeletedId, 1);
         setNotes(newNoteList);
-        console.log("note not save because empty");
+        console.log('note not save because empty');
         setNoteEditing(null);
       }
     }
@@ -258,29 +258,30 @@ export default function Home() {
       );
       newNoteList.splice(noteDeletedId, 1);
       setNotes(newNoteList);
-      console.log("note not save because empty");
+      console.log('note not save because empty');
       setNoteEditing(null);
       return false;
     }
     return true;
   };
   return (
-    <div className="home-container">
+    <div className='home-container'>
       {/* <Upload /> */}
       {/* <Logout logoutHandler={logoutHandler} /> */}
-      <div className="container-margin">
-        {notes && userName ? (
-          <div className="home-note-container">
-            <div className="flex flex-row-reverse">
-              <h1 className="header capitalize">
-                {userName && `${userName + " " + "Notes"}`}{" "}
+      <div className='container-margin'>
+        {notes && userInfomation?.newFirstName ? (
+          <div className='home-note-container'>
+            <div className='flex flex-row-reverse'>
+              <h1 className='header capitalize'>
+                {userInfomation &&
+                  `${userInfomation?.newFirstName + ' ' + 'Notes'}`}{' '}
               </h1>
             </div>
             {notes.map((note, index) => {
               return (
                 <div
                   key={note.uuid}
-                  className="item-container"
+                  className='item-container'
                   onMouseEnter={(e) => itemHovered(note)}
                   onMouseLeave={itemNotHovered}
                   onDragStart={(e) => dragStart(e, index)}
@@ -291,25 +292,25 @@ export default function Home() {
                   <div
                     className={`${
                       note.uuid === hoveredItem || width < 640
-                        ? "note-opt item-hovered"
-                        : "note-opt"
+                        ? 'note-opt item-hovered'
+                        : 'note-opt'
                     }`}
                   >
                     <div
-                      className="item-add-container"
+                      className='item-add-container'
                       onClick={() => handleAddBtn(index)}
                     >
-                      <img className="item-add-icon" src={addIcon} />
+                      <img className='item-add-icon' src={addIcon} />
                     </div>
                     <div
                       className={`${
                         note.uuid === noteOption
-                          ? "item-opt-container item-opt-active"
-                          : "item-opt-container"
+                          ? 'item-opt-container item-opt-active'
+                          : 'item-opt-container'
                       }`}
                       onClick={() => itemClicked(note)}
                     >
-                      <img className="item-opt-icon" src={noteOptionIcon} />
+                      <img className='item-opt-icon' src={noteOptionIcon} />
                     </div>
                   </div>
                   {note.uuid === noteOption ? (
@@ -333,8 +334,8 @@ export default function Home() {
                     saveEditNote={saveEditNote}
                     className={`${
                       isDragActive === index
-                        ? "item-drag-hovered note-container"
-                        : "note-container"
+                        ? 'item-drag-hovered note-container'
+                        : 'note-container'
                     }`}
                   />
                 </div>

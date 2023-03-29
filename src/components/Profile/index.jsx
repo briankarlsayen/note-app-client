@@ -24,20 +24,20 @@ export default function Profile() {
     setDropShow(false);
   };
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const result = await axios.get('/users');
-        const data = {
-          ...result.data,
-        };
-        setUserData(result.data);
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-    getUserData();
-  }, []);
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     try {
+  //       const result = await axios.get('/users');
+  //       const data = {
+  //         ...result.data,
+  //       };
+  //       setUserData(result.data);
+  //     } catch (error) {
+  //       console.log('error', error);
+  //     }
+  //   };
+  //   getUserData();
+  // }, []);
 
   return (
     <div className='relative flex items-center bg-gray-50 pr-2'>
