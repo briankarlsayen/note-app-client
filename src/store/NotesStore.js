@@ -79,9 +79,25 @@ const deleteData = async (set, get, note) => {
   newNoteList.splice(noteDeletedId, 1);
   set({ notes: newNoteList });
 
-  routesPutApi(`/notes/delete/${note.uuid}`);
+  await routesPutApi(`/notes/delete/${note.uuid}`);
+};
 
-  // if (!deleteNoteData) return console.log('error', error);
+const updateData = async (set, get, note) => {
+  const notes = get().notes;
+
+  const editingId = notes.findIndex((el) => el.uuid === note.uuid);
+  const newNoteList = notes;
+  newNoteList[editingId] = note;
+  set({ notes: newNoteList });
+  await routesPutApi(`/notes/edit/${note.uuid}`, note);
+};
+
+const repositionNote = async (set, get, note, repoNotes) => {
+  set({ notes: repoNotes });
+
+  await routesPutApi(`/notes/reposition/${note.uuid}`, {
+    refUuid: note.refUuid,
+  });
 };
 
 const storeObject = (set, get) => ({
@@ -89,6 +105,8 @@ const storeObject = (set, get) => ({
   storeDetails: () => storeData(set),
   addNote: (value) => addData(set, get, value),
   removeNote: (value) => deleteData(set, get, value),
+  updateNote: (value) => updateData(set, get, value),
+  repositionNote: (value, notes) => repositionNote(set, get, value, notes),
 });
 
 export const noteDetailsStore = create(storeObject);

@@ -32,10 +32,14 @@ export default function Home() {
     (state) => state,
     shallow
   );
-  const { notes, storeDetails, addNote, removeNote } = noteDetailsStore(
-    (state) => state,
-    shallow
-  );
+  const {
+    notes,
+    storeDetails,
+    addNote,
+    removeNote,
+    updateNote,
+    repositionNote,
+  } = noteDetailsStore((state) => state, shallow);
 
   useEffect(() => {
     // getNotes();
@@ -137,18 +141,22 @@ export default function Home() {
           const editData = {
             ...isNoteEditing,
             title: noteTextInput,
+            description: '',
+            body: '',
           };
 
-          const editingId = notes.findIndex(
-            (note) => note.uuid === isNoteEditing.uuid
-          );
-          newNoteList[editingId] = editData;
-          setNotes(newNoteList);
-          const editNoteData = await axios.put(
-            `/notes/edit/${isNoteEditing.uuid}`,
-            editData
-          );
-          if (!editNoteData) return console.log('error', error);
+          // const editingId = notes.findIndex(
+          //   (note) => note.uuid === isNoteEditing.uuid
+          // );
+          // newNoteList[editingId] = editData;
+          // setNotes(newNoteList);
+          // const editNoteData = await axios.put(
+          //   `/notes/edit/${isNoteEditing.uuid}`,
+          //   editData
+          // );
+          // if (!editNoteData) return console.log('error', error);
+          updateNote(editData);
+
           setNoteEditing(null);
           setNoteTextInput('');
         } catch (error) {
@@ -201,13 +209,20 @@ export default function Home() {
     copyListItems.splice(dragOverItem.current, 0, dragItemContent);
     dragItem.current = null;
     dragOverItem.current = null;
-    setNotes(copyListItems);
+
+    const note = {
+      refUuid,
+      uuid,
+    };
+
+    // setNotes(copyListItems);
+    await repositionNote(note, copyListItems);
     setDragActive(null);
 
-    const updatePosition = await axios.put(`/notes/reposition/${uuid}`, {
-      refUuid: refUuid,
-    });
-    if (!updatePosition) return console.log('error', error);
+    // const updatePosition = await axios.put(`/notes/reposition/${uuid}`, {
+    //   refUuid: refUuid,
+    // });
+    // if (!updatePosition) return console.log('error', error);
   };
 
   const handleOptionClick = (e) => {
