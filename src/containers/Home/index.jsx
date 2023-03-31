@@ -74,6 +74,8 @@ export default function Home() {
       const params = {
         title: inputText,
         loc: 'last',
+        body: '',
+        description: '',
       };
       addNote(params);
       setInputText('');

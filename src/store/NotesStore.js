@@ -29,9 +29,7 @@ const addData = async (set, get, params) => {
       const uuidParams = notes.length ? notes.slice(-1) : '';
 
       const newNote = await routesPostApi('/notes', {
-        title: params.title,
-        body: '',
-        description: '',
+        ...params,
         refUuid: notes.length ? uuidParams[0].uuid : uuidParams,
       });
 
@@ -48,9 +46,7 @@ const addData = async (set, get, params) => {
       );
 
       const newMiddleNote = await routesPostApi('/notes', {
-        title: params.title,
-        body: '',
-        description: '',
+        ...params,
         refUuid: params.refUuid,
       });
 
