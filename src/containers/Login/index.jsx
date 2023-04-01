@@ -165,7 +165,7 @@ function Login() {
                     {showResponseMsg.message}
                   </p>
                 </form>
-                <GAuth navigate={navigate} />
+                {/* <GAuth navigate={navigate} /> */}
 
                 <p className='mt-6 text-sm text-center text-gray-400'>
                   Don&#x27;t have an account yet?{' '}
