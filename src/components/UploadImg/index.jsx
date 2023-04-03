@@ -1,9 +1,14 @@
+import { routesPutApi } from '../../api';
 import axios from '../../axios';
 import { useState } from 'react';
+import { shallow } from 'zustand/shallow';
+import { accountLoginDetailsStore } from '../../store/AccountStore';
 
-const UploadImg = () => {
+const UploadImg = ({ name, email, setUser }) => {
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState('');
+
+  const { updateUser } = accountLoginDetailsStore((state) => state, shallow);
 
   const convertBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -20,17 +25,37 @@ const UploadImg = () => {
     });
   };
 
-  function uploadSingleImage(base64) {
+  async function uploadSingleImage(base64) {
     setLoading(true);
     console.log('uploading single image');
-    axios
-      .post('/uploadImage', { image: base64 })
-      .then((res) => {
-        setUrl(res.data);
-        alert('Image uploaded Succesfully');
-      })
-      .then(() => setLoading(false))
-      .catch(console.log);
+    const params = {
+      name,
+      email,
+      image: base64,
+    };
+    console.log('params', params);
+    setUser(params);
+    // await updateUser(params);
+    // const res = await routesPutApi('/users/edit', {
+    //   name,
+    //   email,
+    //   image: base64,
+    // });
+    // console.log('res', res);
+    // if (res) {
+    //   // setUrl(res.data);
+    //   setLoading(false);
+    // }
+    setLoading(false);
+
+    // axios
+    //   .post('/uploadImage', { image: base64 })
+    //   .then((res) => {
+    //     setUrl(res.data);
+    //     alert('Image uploaded Succesfully');
+    //   })
+    //   .then(() => setLoading(false))
+    //   .catch(console.log);
   }
 
   const uploadImage = async (event) => {
@@ -39,7 +64,6 @@ const UploadImg = () => {
 
     if (files.length === 1) {
       const base64 = await convertBase64(files[0]);
-      console.log('base64', base64);
       uploadSingleImage(base64);
       return;
     }
@@ -96,7 +120,7 @@ const UploadImg = () => {
           Upload Photo
         </h2>
       </div>
-      <div>
+      {/* <div>
         {url && (
           <div>
             Access you file at{' '}
@@ -105,7 +129,7 @@ const UploadImg = () => {
             </a>
           </div>
         )}
-      </div>
+      </div> */}
       <div>
         {loading ? (
           <div className='flex items-center justify-center'>

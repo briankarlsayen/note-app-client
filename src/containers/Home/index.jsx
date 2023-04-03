@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Note from '../Note';
-import axios from '../../axios';
 import addIcon from '../../assets/icons/add.svg';
 import noteOptionIcon from '../../assets/icons/note-options.svg';
 import Skeleton from '../../components/Skeleton';
@@ -146,17 +145,6 @@ export default function Home() {
             description: '',
             body: '',
           };
-
-          // const editingId = notes.findIndex(
-          //   (note) => note.uuid === isNoteEditing.uuid
-          // );
-          // newNoteList[editingId] = editData;
-          // setNotes(newNoteList);
-          // const editNoteData = await axios.put(
-          //   `/notes/edit/${isNoteEditing.uuid}`,
-          //   editData
-          // );
-          // if (!editNoteData) return console.log('error', error);
           updateNote(editData);
 
           setNoteEditing(null);
@@ -217,14 +205,8 @@ export default function Home() {
       uuid,
     };
 
-    // setNotes(copyListItems);
     await repositionNote(note, copyListItems);
     setDragActive(null);
-
-    // const updatePosition = await axios.put(`/notes/reposition/${uuid}`, {
-    //   refUuid: refUuid,
-    // });
-    // if (!updatePosition) return console.log('error', error);
   };
 
   const handleOptionClick = (e) => {

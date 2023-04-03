@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import axios from '../../axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import addIcon from '../../assets/icons/add.svg';
 import noteOptionIcon from '../../assets/icons/note-options.svg';
@@ -17,9 +16,7 @@ import { shallow } from 'zustand/shallow';
 
 function Item() {
   const { id } = useParams();
-  const [itemsz, setItems] = useState();
   const [inputText, setInputText] = useState('');
-  const [notez, setNote] = useState({});
   const [hoveredItem, setHoveredItem] = useState();
   const [itemOption, setItemOption] = useState('');
   const [isItemEditing, setItemEditing] = useState('');
@@ -44,6 +41,8 @@ function Item() {
     addItem,
     updateCheckedItem,
     removeItem,
+    repositionItem,
+    updateItem,
   } = itemDetailsStore((state) => state, shallow);
 
   useEffect(() => {
@@ -64,8 +63,6 @@ function Item() {
     } else {
       try {
         storeItems(id);
-        // const itemData = await axios.get(`/items/getbynote/${id}`);
-        // if (itemData) return setItems(itemData.data);
       } catch (error) {
         console.log('error', error);
       }
@@ -77,8 +74,6 @@ function Item() {
     } else {
       try {
         storeNote(id);
-        // const noteData = await axios.get(`/notes/${id}`);
-        // return setNote(noteData.data);
       } catch (error) {
         console.log('error', error);
       }
@@ -127,15 +122,6 @@ function Item() {
         checked: !params.checked,
       };
       updateCheckedItem(updatedData);
-
-      // const newItemList = items;
-      // const itemEditingId = items.findIndex(
-      //   (item) => item.uuid === params.uuid
-      // );
-      // newItemList[itemEditingId] = updatedData;
-      // setItems(newItemList);
-      // const completeItem = await axios.put(`/items/editcheck/${params.uuid}`);
-      // if (!completeItem) console.log('unable to update');
     } catch (error) {
       console.log('error', error);
     }
@@ -154,12 +140,6 @@ function Item() {
   const deleteItem = async (item) => {
     try {
       setItemOption('');
-      // const newItemList = items;
-      // const itemDeletedId = items.findIndex((data) => data.uuid === item.uuid);
-      // newItemList.splice(itemDeletedId, 1);
-      // setItems(newItemList);
-      // const deleteItemData = await axios.put(`/items/delete/${item.uuid}`);
-      // if (!deleteItemData) return console.log('error', error);
       removeItem(item);
     } catch (error) {
       console.log('error', error);
@@ -169,10 +149,6 @@ function Item() {
     if (isItemEditing) {
       if (e.type === 'submit') e.preventDefault();
       setItemOption('');
-      // const newItemList = items;
-      // const itemEditingId = items.findIndex(
-      //   (item) => item.uuid === isItemEditing.uuid
-      // );
       if (isRefUuid) {
         try {
           let params;
@@ -186,7 +162,7 @@ function Item() {
               type: 'Bookmark',
               checked: false,
               isItemEditing,
-              loc: 'last',
+              loc: 'middle',
             };
           } else {
             params = {
@@ -198,38 +174,30 @@ function Item() {
               type: 'Text',
               checked: false,
               isItemEditing,
-              loc: 'last',
+              loc: 'middle',
             };
           }
 
           addItem(params);
-          // const createNewItem = await axios.post('/items', params);
-          // if (!createNewItem) return console.log('error', error);
-
-          // newItemList[itemEditingId] = createNewItem.data.item;
-          // setItems(newItemList);
           setRefUuid('');
           setItemEditing('');
         } catch (error) {
           console.log('error', error);
         }
       } else {
-        // try {
-        //   const params = {
-        //     ...isItemEditing,
-        //     title: editTextInput,
-        //   };
-        //   newItemList[itemEditingId] = params;
-        //   setItems(newItemList);
-        //   const editNoteData = await axios.put(
-        //     `/items/edit/${isItemEditing.uuid}`,
-        //     params
-        //   );
-        //   if (!editNoteData) return console.log('error', error);
-        //   setItemEditing('');
-        // } catch (error) {
-        //   console.log('error', error);
-        // }
+        try {
+          const params = {
+            ...isItemEditing,
+            title: editTextInput,
+            description: '',
+            body: '',
+          };
+
+          updateItem(params);
+          setItemEditing('');
+        } catch (error) {
+          console.log('error', error);
+        }
       }
     }
   };
@@ -268,6 +236,7 @@ function Item() {
   };
 
   const handleAddBtn = (index) => {
+    console.log('click');
     const uuidParams = items.length ? items[index].uuid : '';
     const newAItem = {
       uuid: Date.now(),
@@ -279,7 +248,7 @@ function Item() {
     setRefUuid(uuidParams);
     const newItemArr = items;
     newItemArr.splice(index + 1, 0, newAItem);
-    setItems(newItemArr);
+    // setItems(newItemArr);
     setItemEditing(newAItem);
   };
 
@@ -303,13 +272,13 @@ function Item() {
     copyListItems.splice(dragOverItem.current, 0, dragItemContent);
     dragItem.current = null;
     dragOverItem.current = null;
-    setItems(copyListItems);
-    setDragActive(null);
 
-    const updatePosition = await axios.put(`/items/reposition/${uuid}`, {
-      refUuid: refUuid,
-    });
-    if (!updatePosition) return console.log('error', error);
+    const item = {
+      refUuid,
+      uuid,
+    };
+    await repositionItem(item, copyListItems);
+    setDragActive(null);
   };
 
   return (

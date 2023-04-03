@@ -44,7 +44,6 @@ const addData = async (set, get, params) => {
       });
 
       if (newNote) {
-        console.log('newNote', newNote);
         let newNoteData = newNote.data.item;
         let noteList = [...items, newNoteData];
         return set({ items: noteList });
@@ -56,10 +55,13 @@ const addData = async (set, get, params) => {
         (item) => item.uuid === params.isItemEditing.uuid
       );
 
-      const newMiddleNote = await routesPostApi('/items', ...params);
+      const newMiddleNote = await routesPostApi('/items', {
+        ...params,
+        refUuid: params.refUuid,
+      });
 
       if (newMiddleNote) {
-        newItemList[itemEditingId] = newMiddleNote.data.note;
+        newItemList[itemEditingId] = newMiddleNote.data.item;
         return set({ items: newItemList });
       }
       break;
@@ -77,21 +79,21 @@ const deleteData = async (set, get, item) => {
   await routesPutApi(`/items/delete/${item.uuid}`);
 };
 
-const updateData = async (set, get, note) => {
+const updateData = async (set, get, item) => {
   const items = get().items;
 
-  const editingId = items.findIndex((el) => el.uuid === note.uuid);
+  const editingId = items.findIndex((el) => el.uuid === item.uuid);
   const newNoteList = items;
-  newNoteList[editingId] = note;
+  newNoteList[editingId] = item;
   set({ items: newNoteList });
-  await routesPutApi(`/items/edit/${note.uuid}`, note);
+  await routesPutApi(`/items/edit/${item.uuid}`, item);
 };
 
-const repositionData = async (set, get, note, repoNotes) => {
+const repositionData = async (set, get, item, repoNotes) => {
   set({ items: repoNotes });
 
-  await routesPutApi(`/items/reposition/${note.uuid}`, {
-    refUuid: note.refUuid,
+  await routesPutApi(`/items/reposition/${item.uuid}`, {
+    refUuid: item.refUuid,
   });
 };
 
