@@ -1,41 +1,58 @@
 import { create } from 'zustand';
-import { routesGetApi, routesPutApi } from '../api';
-
-//API Function
+import { routesGetApi, routesPostApi, routesPutApi } from '../api';
 
 const accountDetails = {
   userInfomation: {
     name: '',
     newFirstName: '',
     nameInitital: '',
+    email: '',
+    image: '',
   },
 };
 
-//set Details object properties
+const otherNamespaces = (name) => {
+  const capitalizeFirstName = name.charAt(0).toUpperCase();
+  const newFirstName = capitalizeFirstName + name.slice(1) + `'s`;
+  const nameInitital = name[0];
+  return {
+    newFirstName,
+    nameInitital,
+  };
+};
+
 const storeAcc = async (set) => {
-  await routesGetApi('/users').then(({ data }) => {
-    // console.log('data');
-    const capitalizeFirstName = data.name.charAt(0).toUpperCase();
-    const newFirstName = capitalizeFirstName + data.name.slice(1) + `'s`;
-    const nameInitital = data.name[0];
-    // console.log('newFirstName', data);
-    return set({
-      userInfomation: { ...data, newFirstName, nameInitital },
-    });
+  await routesGetApi('/users').then(({ data, status }) => {
+    if (status === 200) {
+      const { newFirstName, nameInitital } = otherNamespaces(data.name);
+      console.log('storing...');
+      return set({
+        userInfomation: { ...data, newFirstName, nameInitital },
+      });
+    }
   });
 };
 
 const updateData = async (set, get, user) => {
-  await routesPutApi('/users/edit', user);
+  let userInfo = get().userInfomation;
 
-  console.log('user', user);
-  set({ userInfomation: { ...user } });
+  const { newFirstName, nameInitital } = otherNamespaces(
+    user.name ?? userInfo.name
+  );
+
+  await routesPutApi('/users/edit', user);
+  set({ userInfomation: { ...userInfo, ...user, newFirstName, nameInitital } });
+};
+
+const logout = async (set) => {
+  set({ userInfomation: {} });
 };
 
 const accountLoginStoreObject = (set, get) => ({
   ...accountDetails,
   storeAccDetails: () => storeAcc(set),
   updateUser: (value) => updateData(set, get, value),
+  logoutUser: () => logout(set),
 });
 
 export const accountLoginDetailsStore = create(accountLoginStoreObject);

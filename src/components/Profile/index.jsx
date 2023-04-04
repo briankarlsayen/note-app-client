@@ -1,35 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../axios';
-import jwtDecode from 'jwt-decode';
 import { shallow } from 'zustand/shallow';
 import { accountLoginDetailsStore } from '../../store/AccountStore';
 
 export default function Profile() {
   const [isDropShow, setDropShow] = useState(false);
-  // const [userInfomation, setUserData] = useState('');
   const navigate = useNavigate();
 
-  const { userInfomation } = accountLoginDetailsStore(
+  const { userInfomation, logoutUser } = accountLoginDetailsStore(
     (state) => state,
     shallow
   );
 
   const logoutHandler = async () => {
-    const user = await axios('/users');
-    if (!user) console.log('unable to get data');
-    if (user.data?.gauth) {
-      google.accounts.id.revoke(user.data?.gauth.sub, (done) => {
+    if (userInfomation?.gauth) {
+      google.accounts.id.revoke(userInfomation.gauth.sub, (done) => {
         console.log(done.error);
       });
       // google.accounts.id.disableAutoSelect();
       // google.accounts.id.cancel();
     }
+    await logoutUser();
 
     localStorage.removeItem('token');
     navigate('/app/login');
     setDropShow(false);
   };
+
   return (
     <div className='relative flex items-center bg-gray-50 pr-2'>
       <p className='px-0.5'>{userInfomation && `${userInfomation?.name}`}</p>
@@ -47,19 +44,23 @@ export default function Profile() {
           logoutHandler={logoutHandler}
           userInfomation={userInfomation}
           navigate={navigate}
+          setDropShow={setDropShow}
         />
       )}
     </div>
   );
 }
 
-const DropDown = ({ logoutHandler, userInfomation, navigate }) => {
+const DropDown = ({ logoutHandler, userInfomation, navigate, setDropShow }) => {
   return (
     <div className='absolute z-20 w-56 py-2 top-12 right-4 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800'>
       <li
         className='flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform 
       dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer'
-        onClick={() => navigate('/app/profile')}
+        onClick={() => {
+          setDropShow(false);
+          navigate('/app/profile');
+        }}
       >
         <span className='font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono'>
           {userInfomation && `${userInfomation?.nameInitital}`}
@@ -75,17 +76,17 @@ const DropDown = ({ logoutHandler, userInfomation, navigate }) => {
       </li>
       <hr className='border-gray-200 dark:border-gray-700 ' />
 
-      <li
+      {/* <li
         className='block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300
        hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white'
       >
         view profile
-      </li>
+      </li> */}
 
       <li
         onClick={logoutHandler}
         className='block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 
-      transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white'
+      transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer'
       >
         Sign Out
       </li>

@@ -107,6 +107,10 @@ const updateCheckedData = async (set, get, item) => {
   set({ items: newItemList });
 };
 
+const clearState = async (set, get) => {
+  set({ note: {}, items: [] });
+};
+
 const storeObject = (set, get) => ({
   ...itemDetails,
   storeNote: (value) => storeNote(set, value),
@@ -116,6 +120,7 @@ const storeObject = (set, get) => ({
   updateItem: (value) => updateData(set, get, value),
   repositionItem: (value, items) => repositionData(set, get, value, items),
   updateCheckedItem: (value) => updateCheckedData(set, get, value),
+  clearState: () => clearState(set, get),
 });
 
 export const itemDetailsStore = create(storeObject);

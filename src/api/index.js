@@ -97,6 +97,7 @@ export const routesGetApi = async (routeName) => {
       return response;
     })
     .catch((err) => {
+      console.log('err', err);
       const status = err.response === undefined ? 12023 : err.response.status;
       const message = err.response.data.message;
       apiErrorAlert(status, message);

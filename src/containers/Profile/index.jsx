@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from '../../axios';
 import BackBtn from '../../components/BackBtn';
 import UploadImg from '../../components/UploadImg';
 import { shallow } from 'zustand/shallow';
 import { accountLoginDetailsStore } from '../../store/AccountStore';
+import Navbar from '../../components/Navbar';
 
 const Profile = () => {
   const { userInfomation, updateUser } = accountLoginDetailsStore(
@@ -11,19 +12,26 @@ const Profile = () => {
     shallow
   );
 
-  console.log('userInfomation', userInfomation);
+  const inputRef = useRef(null);
+
+  // console.log('userInfomation', userInfomation);
   const [user, setUser] = useState({
     name: '',
     email: '',
     image: '',
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getUser();
   }, [userInfomation]);
 
   const getUser = () => {
-    setUser(userInfomation);
+    setUser({
+      name: userInfomation.name,
+      email: userInfomation.email,
+      image: userInfomation.image,
+    });
   };
 
   const updateField = (e) => {
@@ -38,9 +46,11 @@ const Profile = () => {
     await updateUser(user);
   };
 
+  console.log('user', user);
+
   return (
     <div className='flex justify-center w-full h-full min-h-screen items-center'>
-      <BackBtn />
+      {/* <Navbar /> */}
       <div className='flex flex-col w-full max-w-lg'>
         <h2 className='pt-8 text-lg uppercase'>Profile</h2>
         <form className='pt-4' onSubmit={submitFormHandler}>
@@ -61,7 +71,11 @@ const Profile = () => {
               <UploadImg
                 name={userInfomation.name}
                 email={userInfomation.email}
+                image={userInfomation.image}
                 setUser={setUser}
+                loading={loading}
+                setLoading={setLoading}
+                inputRef={inputRef}
               />
               {/* <button className='bg-blue-600 text-white p-2 rounded-md h-10'>
                 Upload

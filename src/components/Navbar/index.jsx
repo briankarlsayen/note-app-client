@@ -1,24 +1,27 @@
-import React from 'react'
-import Profile from '../Profile'
-import { useNavigate ,useLocation } from 'react-router-dom'
-import backIcon from '../../assets/icons/back.svg'
+import React from 'react';
+import Profile from '../Profile';
+import { useLocation } from 'react-router-dom';
+import BackBtn from '../BackBtn';
 
 function Navbar() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const locationArr = location.pathname.split('/')
-  
+  const location = useLocation();
+  const locationArr = location.pathname.split('/');
+
+  const checkValidRoute = () => {
+    const validLoc = ['item', 'profile'];
+    if (validLoc.findIndex((loc) => loc === locationArr[2]) > -1) return true;
+    return false;
+  };
+
   return (
-    <div className="flex w-full h-12 items-end align-middle justify-between">
-      { locationArr.length === 4 && locationArr[2] === 'item' ?  
-        <div onClick={()=>navigate('/app/notes')} className="m-2 my-auto align-middle items-center flex hover:bg-gray-100 rounded-md cursor-pointer">
-          <img className="back-btn-icon" src={backIcon} />
-          <p className='text-sm'>Back</p>
-        </div> : <div></div>
-      }
+    <div
+      id='nav'
+      className='flex w-full h-12 items-end align-middle justify-between'
+    >
+      {checkValidRoute() ? <BackBtn /> : <div></div>}
       <Profile />
     </div>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;
