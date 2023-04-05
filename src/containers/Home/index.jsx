@@ -266,7 +266,6 @@ export default function Home() {
   return (
     <div className='home-container'>
       {/* <Upload /> */}
-      {/* <Logout logoutHandler={logoutHandler} /> */}
       <div className='container-margin'>
         {notes && userInfomation?.newFirstName ? (
           <div className='home-note-container'>

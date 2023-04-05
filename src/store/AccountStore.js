@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { routesGetApi, routesPostApi, routesPutApi } from '../api';
+import { routesGetApi, routesPutApiWithAlert } from '../api';
 
 const accountDetails = {
   userInfomation: {
@@ -40,7 +40,7 @@ const updateData = async (set, get, user) => {
     user.name ?? userInfo.name
   );
 
-  await routesPutApi('/users/edit', user);
+  await routesPutApiWithAlert('/users/edit', user);
   set({ userInfomation: { ...userInfo, ...user, newFirstName, nameInitital } });
 };
 

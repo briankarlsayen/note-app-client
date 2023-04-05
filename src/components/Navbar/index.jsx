@@ -16,7 +16,7 @@ function Navbar() {
   return (
     <div
       id='nav'
-      className='flex w-full h-12 items-end align-middle justify-between'
+      className='flex w-screen h-15 items-end align-middle justify-between px-2 pt-2'
     >
       {checkValidRoute() ? <BackBtn /> : <div></div>}
       <Profile />

@@ -1,5 +1,4 @@
-import { useState, useRef } from 'react';
-
+import { FaUpload, FaPen, FaTrash } from 'react-icons/fa';
 const UploadImg = ({
   name,
   email,
@@ -9,9 +8,6 @@ const UploadImg = ({
   setLoading,
   inputRef,
 }) => {
-  // const [loading, setLoading] = useState(false);
-  // const inputRef = useRef(null);
-
   const convertBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -26,8 +22,6 @@ const UploadImg = ({
       };
     });
   };
-
-  console.log('inputRef', inputRef);
 
   async function uploadSingleImage(base64) {
     setLoading(true);
@@ -71,28 +65,43 @@ const UploadImg = ({
     );
   }
 
-  console.log('hey');
-
-  return (
-    <div className='flex justify-center flex-col m-8 '>
-      {/* <div>
-        <h2 className='mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white'>
-          Upload Photo
-        </h2>
-      </div> */}
-      {/* <div>
-        {url && (
-          <div>
-            Access you file at{' '}
-            <a href={url} target='_blank' rel='noopener noreferrer'>
-              {url}
-            </a>
+  const EdiImageBtn = () => {
+    console.log('image', image);
+    return (
+      <div>
+        {!image ? (
+          <div
+            className='border-slate-300 border text-blue-500 py-2 px-4 flex gap-2 rounded-md cursor-pointer items-center hover:bg-slate-100'
+            onClick={() => inputRef.current.click()}
+          >
+            <FaUpload />
+            Upload
+          </div>
+        ) : (
+          <div className='flex gap-2'>
+            <div
+              className='border-slate-300 border text-blue-500 py-2 px-4 flex gap-2 rounded-md cursor-pointer items-center hover:bg-slate-100'
+              onClick={() => inputRef.current.click()}
+            >
+              <FaPen />
+              Change
+            </div>
+            <div
+              className='border-slate-300 border text-red-500 py-2 px-4 flex gap-2 rounded-md cursor-pointer items-center hover:bg-slate-100'
+              onClick={() => setUser({ name, email, image: '' })}
+            >
+              <FaTrash />
+              Remove
+            </div>
           </div>
         )}
-      </div> */}
-      <div className='bg-blue-300 p-4' onClick={() => inputRef.current.click()}>
-        Upload
       </div>
+    );
+  };
+
+  return (
+    <div className='flex justify-center flex-col'>
+      <EdiImageBtn />
       <div>
         {loading ? (
           <div className='flex items-center justify-center'>

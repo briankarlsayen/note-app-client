@@ -16,7 +16,7 @@ const BackBtn = () => {
   return (
     <div
       onClick={handleBackBtn}
-      className='m-2 my-auto align-middle items-center flex hover:bg-gray-100 rounded-md cursor-pointer'
+      className='my-auto flex items-center hover:bg-gray-100 rounded-md cursor-pointer h-12 px-2'
     >
       <img className='back-btn-icon' src={backIcon} />
       <p className='text-sm'>Back</p>

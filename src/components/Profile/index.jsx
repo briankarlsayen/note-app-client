@@ -28,17 +28,35 @@ export default function Profile() {
   };
 
   return (
-    <div className='relative flex items-center bg-gray-50 pr-2'>
-      <p className='px-0.5'>{userInfomation && `${userInfomation?.name}`}</p>
-      <button
-        onClick={() => setDropShow(!isDropShow)}
-        className='relative z-10 flex items-center p-2 text-sm w-12 h-12
-      text-gray-600 bg-gray-50 border border-transparent rounded-md dark:text-white dark:bg-gray-800'
+    <div
+      className='relative flex items-center bg-gray-50 cursor-pointer hover:bg-gray-100 px-2 h-12'
+      onClick={() => setDropShow(!isDropShow)}
+    >
+      <p className='px-0.5 font-semibold text-sm'>
+        {userInfomation && `${userInfomation?.name}`}
+      </p>
+      <div
+        // onClick={() => setDropShow(!isDropShow)}
+        className='relative z-10 flex items-center p-2 text-sm text-gray-600  border border-transparent rounded-md dark:text-white dark:bg-gray-800'
       >
-        <span className='font-bold w-full h-full bg-gray-400 text-white rounded-full flex items-center justify-center font-mono p-4'>
+        {/* <span className='font-bold w-full h-full bg-gray-400 text-white rounded-full flex items-center justify-center font-mono p-4'>
           {userInfomation && `${userInfomation?.nameInitital}`}
-        </span>
-      </button>
+        </span> */}
+        {userInfomation?.image ? (
+          <div className='w-10 h-10'>
+            <img
+              src={userInfomation?.image}
+              // src='https://img.freepik.com/free-vector/skull-cow-boho-composition_1284-35910.jpg?size=338&ext=jpg'
+              alt='profile-img'
+              className='h-full w-full object-cover shadow-md'
+            />
+          </div>
+        ) : (
+          <span className='font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono'>
+            {userInfomation && `${userInfomation?.nameInitital}`}
+          </span>
+        )}
+      </div>
       {isDropShow && (
         <DropDown
           logoutHandler={logoutHandler}
@@ -53,7 +71,7 @@ export default function Profile() {
 
 const DropDown = ({ logoutHandler, userInfomation, navigate, setDropShow }) => {
   return (
-    <div className='absolute z-20 w-56 py-2 top-12 right-4 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800'>
+    <div className='absolute z-20 w-56 py-2 top-12 right-4 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800 border border-slate-200'>
       <li
         className='flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-200 transform 
       dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer'
@@ -62,9 +80,19 @@ const DropDown = ({ logoutHandler, userInfomation, navigate, setDropShow }) => {
           navigate('/app/profile');
         }}
       >
-        <span className='font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono'>
-          {userInfomation && `${userInfomation?.nameInitital}`}
-        </span>
+        {userInfomation?.image ? (
+          <div className='w-10 h-10'>
+            <img
+              src={userInfomation?.image}
+              alt='profile-img'
+              className='h-full w-full object-cover shadow-md'
+            />
+          </div>
+        ) : (
+          <span className='font-bold w-10 h-10 bg-gray-400 text-white rounded-full flex items-center justify-center font-mono'>
+            {userInfomation && `${userInfomation?.nameInitital}`}
+          </span>
+        )}
         <div className='mx-1'>
           <h1 className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
             {userInfomation && `${userInfomation?.name}`}
@@ -75,14 +103,6 @@ const DropDown = ({ logoutHandler, userInfomation, navigate, setDropShow }) => {
         </div>
       </li>
       <hr className='border-gray-200 dark:border-gray-700 ' />
-
-      {/* <li
-        className='block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300
-       hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white'
-      >
-        view profile
-      </li> */}
-
       <li
         onClick={logoutHandler}
         className='block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 
