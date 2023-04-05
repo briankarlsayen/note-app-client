@@ -35,20 +35,13 @@ export default function Profile() {
       <p className='px-0.5 font-semibold text-sm'>
         {userInfomation && `${userInfomation?.name}`}
       </p>
-      <div
-        // onClick={() => setDropShow(!isDropShow)}
-        className='relative z-10 flex items-center p-2 text-sm text-gray-600  border border-transparent rounded-md dark:text-white dark:bg-gray-800'
-      >
-        {/* <span className='font-bold w-full h-full bg-gray-400 text-white rounded-full flex items-center justify-center font-mono p-4'>
-          {userInfomation && `${userInfomation?.nameInitital}`}
-        </span> */}
+      <div className='relative z-10 flex items-center p-2 text-sm text-gray-600  border border-transparent rounded-md dark:text-white dark:bg-gray-800'>
         {userInfomation?.image ? (
           <div className='w-10 h-10'>
             <img
               src={userInfomation?.image}
-              // src='https://img.freepik.com/free-vector/skull-cow-boho-composition_1284-35910.jpg?size=338&ext=jpg'
               alt='profile-img'
-              className='h-full w-full object-cover shadow-md'
+              className='h-full w-full object-cover shadow-md rounded-full'
             />
           </div>
         ) : (
@@ -85,7 +78,7 @@ const DropDown = ({ logoutHandler, userInfomation, navigate, setDropShow }) => {
             <img
               src={userInfomation?.image}
               alt='profile-img'
-              className='h-full w-full object-cover shadow-md'
+              className='h-full w-full object-cover shadow-md rounded-full'
             />
           </div>
         ) : (

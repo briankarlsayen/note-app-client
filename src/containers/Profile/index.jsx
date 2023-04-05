@@ -1,11 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
-import axios from '../../axios';
-import BackBtn from '../../components/BackBtn';
 import UploadImg from '../../components/UploadImg';
 import { shallow } from 'zustand/shallow';
 import { accountLoginDetailsStore } from '../../store/AccountStore';
-import Navbar from '../../components/Navbar';
-import { FaUpload, FaPen, FaTrash } from 'react-icons/fa';
 
 const Profile = () => {
   const { userInfomation, updateUser } = accountLoginDetailsStore(
@@ -15,7 +11,6 @@ const Profile = () => {
 
   const inputRef = useRef(null);
 
-  // console.log('userInfomation', userInfomation);
   const [user, setUser] = useState({
     name: '',
     email: '',
@@ -60,9 +55,8 @@ const Profile = () => {
                 {user.image ? (
                   <img
                     src={user.image}
-                    // src='https://img.freepik.com/free-vector/skull-cow-boho-composition_1284-35910.jpg?size=338&ext=jpg'
                     alt='profile-img'
-                    className='h-full w-full object-cover shadow-md'
+                    className='h-full w-full object-cover shadow-md rounded-full'
                   />
                 ) : (
                   <span className='font-bold w-full h-full bg-gray-400 text-white rounded-full flex items-center justify-center font-mono p-4 text-7xl'>

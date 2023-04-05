@@ -66,7 +66,6 @@ const UploadImg = ({
   }
 
   const EdiImageBtn = () => {
-    console.log('image', image);
     return (
       <div>
         {!image ? (

@@ -3,8 +3,6 @@ import Note from '../Note';
 import addIcon from '../../assets/icons/add.svg';
 import noteOptionIcon from '../../assets/icons/note-options.svg';
 import Skeleton from '../../components/Skeleton';
-import Upload from '../UploadImage';
-import Navbar from '../../components/Navbar';
 import Options from '../../components/List/Options';
 import InputBar from '../../components/List/InputBar';
 import useWindowDimensions from '../../components/useWindowDimensions';
@@ -23,11 +21,9 @@ export default function Home() {
   const dragItem = useRef();
   const dragOverItem = useRef();
   const [isDragActive, setDragActive] = useState();
-  const [notesz, setNotes] = useState();
-  const { height, width } = useWindowDimensions();
-  const [userName, setUserName] = useState();
+  const { width } = useWindowDimensions();
 
-  const { userInfomation, storeAccDetails } = accountLoginDetailsStore(
+  const { userInfomation } = accountLoginDetailsStore(
     (state) => state,
     shallow
   );
@@ -41,31 +37,8 @@ export default function Home() {
   } = noteDetailsStore((state) => state, shallow);
 
   useEffect(() => {
-    // getNotes();
-    // getUser();
-    // storeAccDetails();
     storeDetails();
   }, []);
-
-  // const getNotes = async () => {
-  //   try {
-  //     const getNotes = await axios.get('/notes');
-  //     setNotes(getNotes.data);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
-  // const getUser = async () => {
-  //   try {
-  //     const result = await axios.get('/users');
-  //     const capitalizeFirstName = result.data.name.charAt(0).toUpperCase();
-  //     const newFirstName =
-  //       capitalizeFirstName + result.data.name.slice(1) + `'s`;
-  //     setUserName(newFirstName);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
 
   const createNote = async (e) => {
     e.preventDefault();
@@ -113,8 +86,6 @@ export default function Home() {
     if (e.type === 'submit') e.preventDefault();
     if (isNoteEditing && checkInputEmpty()) {
       setNoteOption('');
-      const newNoteList = notes;
-
       if (isRefUuid) {
         try {
           const editData = {
@@ -124,7 +95,6 @@ export default function Home() {
             description: '',
             type: 'Text',
             checked: false,
-
             isNoteEditing,
             loc: 'middle',
           };
@@ -173,9 +143,10 @@ export default function Home() {
     };
 
     setRefUuid(uuidParams);
+    // * do not remove, it just works and its dumb <---
     const newItemArr = notes;
     newItemArr.splice(index + 1, 0, newAItem);
-    setNotes(newItemArr);
+    // * --->
     setNoteEditing(newAItem);
   };
 
@@ -209,46 +180,6 @@ export default function Home() {
     setDragActive(null);
   };
 
-  const handleOptionClick = (e) => {
-    const restrictClass = [
-      'item-input',
-      'note-opt-icon',
-      'item-opt-icon',
-      'item-opt-active',
-      'note-opt-item',
-    ];
-    let restrict = true;
-    for (let item1 of restrictClass) {
-      for (let item2 of e.target.classList) {
-        if (item1 === item2) restrict = false;
-      }
-    }
-    if (noteOption) {
-      if (restrict) {
-        if (e.target.className !== 'item-opt-container') {
-          setNoteOption('');
-          setHoveredItem('');
-          // TODO save only if changed
-          saveEditNote(e);
-        }
-      }
-    }
-    if (isNoteEditing) {
-      if (noteTextInput) {
-        saveEditNote(e);
-      } else {
-        const newNoteList = notes;
-        const noteDeletedId = notes.findIndex(
-          (data) => data.uuid === isNoteEditing.uuid
-        );
-        newNoteList.splice(noteDeletedId, 1);
-        setNotes(newNoteList);
-        console.log('note not save because empty');
-        setNoteEditing(null);
-      }
-    }
-  };
-
   const checkInputEmpty = () => {
     if (!noteTextInput) {
       const newNoteList = notes;
@@ -256,7 +187,6 @@ export default function Home() {
         (data) => data.uuid === isNoteEditing.uuid
       );
       newNoteList.splice(noteDeletedId, 1);
-      setNotes(newNoteList);
       console.log('note not save because empty');
       setNoteEditing(null);
       return false;
@@ -265,7 +195,6 @@ export default function Home() {
   };
   return (
     <div className='home-container'>
-      {/* <Upload /> */}
       <div className='container-margin'>
         {notes && userInfomation?.newFirstName ? (
           <div className='home-note-container'>

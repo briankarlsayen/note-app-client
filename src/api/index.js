@@ -1,7 +1,5 @@
-// import axios from "axios";
 import api from '../axios';
 import { Toast } from './middleware';
-// import server_url from './server_url';
 
 const headerAuth = () => {
   return {
@@ -12,13 +10,16 @@ const headerAuth = () => {
   };
 };
 
-const successAlert = (status, method) => {
+const successAlert = (status, method, message) => {
   const defaultMessage = `Successfully ${
     method === 'post' ? 'created' : 'updated'
   }`;
   switch (status) {
+    case 200:
+      Toast.fire({ icon: 'success', title: message ?? defaultMessage });
+      break;
     case 201:
-      Toast.fire({ icon: 'success', title: defaultMessage });
+      Toast.fire({ icon: 'success', title: message ?? defaultMessage });
       break;
     default:
       Toast.fire({ icon: 'success', title: 'Success' });
@@ -65,6 +66,27 @@ export const routesPostApi = async (routeName, params) => {
   return api
     .post(routeName, params, headerAuth())
     .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      const status = err.response === undefined ? 12023 : err.response.status;
+      const message =
+        err.response === undefined
+          ? 'Server Maintenance!'
+          : err.response.data.message;
+      apiErrorAlert(status, message);
+      return {
+        data: {},
+        status,
+      };
+    });
+};
+
+export const routesPostApiWithAlert = async (routeName, params) => {
+  return api
+    .post(routeName, params, headerAuth())
+    .then((res) => {
+      successAlert(res.status, res.config.method, res.data.message);
       return res;
     })
     .catch((err) => {
