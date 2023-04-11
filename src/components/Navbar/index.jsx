@@ -14,13 +14,13 @@ function Navbar() {
   };
 
   return (
-    <div
+    <nav
       id='nav'
-      className='flex w-screen h-15 items-end align-middle justify-between px-2 pt-2'
+      className='flex w-full h-15 items-end align-middle justify-between px-2 pt-2'
     >
       {checkValidRoute() ? <BackBtn /> : <div></div>}
       <Profile />
-    </div>
+    </nav>
   );
 }
 

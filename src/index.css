@@ -45,7 +45,7 @@ input[type='number'] {
     @apply flex flex-col items-center bg-gray-50 w-full pb-4 h-full relative px-8 min-h-[calc(100vh-3.5rem)];
   }
   .home-note-container {
-    @apply rounded max-w-[900px]  w-full leading-normal;
+    @apply rounded max-w-[900px]  w-full leading-normal mx-auto;
   }
 
   .back-btn-container {
@@ -110,7 +110,7 @@ input[type='number'] {
     @apply flex;
   }
   .item-list-margin {
-    @apply w-10;
+    @apply w-0;
   }
   .item-list-container {
     @apply w-full flex break-all;

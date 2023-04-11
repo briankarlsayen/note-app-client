@@ -33,7 +33,6 @@ const storeNote = async (set, id) => {
 // TODO edit this to not wait for response
 const addData = async (set, get, params) => {
   const items = get().items;
-
   switch (params.loc) {
     case 'last':
       const uuidParams = items.length ? items.slice(-1) : '';

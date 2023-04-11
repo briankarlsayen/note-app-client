@@ -43,6 +43,7 @@ export default function Home() {
   const createNote = async (e) => {
     e.preventDefault();
     try {
+      if (!inputText) return null;
       const params = {
         title: inputText,
         loc: 'last',

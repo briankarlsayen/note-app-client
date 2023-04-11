@@ -85,6 +85,7 @@ function Item() {
     try {
       const lastItemUuid = items.length ? items[items.length - 1].uuid : null;
       let params;
+      if (!inputText) return null;
       if (isURL(inputText)) {
         setCreateItemCB(true);
         params = {
@@ -105,7 +106,7 @@ function Item() {
           loc: 'last',
         };
       }
-
+      console.log('before addItem');
       const newItem = addItem(params);
       if (newItem) {
         setCreateItemCB(false);
@@ -146,6 +147,7 @@ function Item() {
     }
   };
   const saveEditItem = async (e) => {
+    if (editTextInput) return null;
     if (isItemEditing) {
       if (e.type === 'submit') e.preventDefault();
       setItemOption('');
@@ -236,7 +238,6 @@ function Item() {
   };
 
   const handleAddBtn = (index) => {
-    console.log('click');
     const uuidParams = items.length ? items[index].uuid : '';
     const newAItem = {
       uuid: Date.now(),
